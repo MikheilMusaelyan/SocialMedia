@@ -34,7 +34,8 @@ app.use((req, res, next) => {
     res.setHeader(
         'Access-Control-Allow-Methods',
         'POST, GET, PATCH, PUT, DELETE, OPTIONS'
-    )
+    );
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     next();
 });
 
