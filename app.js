@@ -42,6 +42,9 @@ app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
 app.use('/activeUsers', activeUsersRoutes);
 app.use('/messages', messages)
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
 
 
 module.exports = app
