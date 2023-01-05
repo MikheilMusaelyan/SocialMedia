@@ -34,7 +34,7 @@ router.post('', (req, res, cb) => {
         .catch(err => {
             console.log(err)
             res.status(500).json({
-                message: process.env.DB_USERNAME
+                message: 'There is a user with same email or nickname'
             });
         })
     })
