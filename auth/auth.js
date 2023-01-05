@@ -40,7 +40,7 @@ router.post('', (req, res, cb) => {
     })
 });
 
-router.get('', (req, res, cb) => {
+router.get('/', (req, res, cb) => {
     // let myId = req.userData.userId;
     User.find()
     .then(data => {
