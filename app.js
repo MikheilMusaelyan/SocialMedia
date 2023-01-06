@@ -27,19 +27,6 @@ mongoose.connect(`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@mikescluster.aootk
     console.log('unable to connect!')
 })
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', "*");
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, auth'
-    );
-    res.setHeader(
-        'Access-Control-Allow-Methods',
-        'POST, GET, PATCH, PUT, DELETE, OPTIONS'
-    );
-    next();
-});
-
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
 app.use('/activeUsers', activeUsersRoutes);
