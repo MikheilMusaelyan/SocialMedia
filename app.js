@@ -37,7 +37,6 @@ app.use((req, res, next) => {
         'Access-Control-Allow-Methods',
         'POST, GET, PATCH, PUT, DELETE, OPTIONS'
     );
-    console.log('edas')
     next();
 });
 
