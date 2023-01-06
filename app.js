@@ -6,8 +6,10 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./auth/auth');
 const postRoutes = require('./posts/posts');
 const activeUsersRoutes = require('./auth/activeUsers');
-const messages = require('./messages/messages')
+const messages = require('./messages/messages');
+const cors = require('cors');
 
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/images', express.static('backend/images'))
