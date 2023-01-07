@@ -38,7 +38,7 @@ const onListening = () => {
 
 // const express = require('express');
 // const router = express.Router();
-require('dotenv').config({ path: 'backend/.env' });
+require('dotenv').config();
 
 const app = require("./app");
 const debug = require("debug")("node-angular"); //node-angular any name
