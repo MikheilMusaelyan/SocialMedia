@@ -11,7 +11,7 @@ const cors = require('cors');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/images', express.static('images'))
+app.use('/images', express.static('backend/images'))
 
 const mongoose = require('mongoose');
 
