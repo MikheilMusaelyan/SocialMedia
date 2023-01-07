@@ -18,7 +18,11 @@ const mongoose = require('mongoose');
 const {DB_USERNAME, DB_PASSWORD} = process.env
 
 mongoose.set('strictQuery', false);
-mongoose.connect(`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@mikescluster.aootk6w.mongodb.net/?retryWrites=true&w=majority`)
+mongoose.connect(`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@mikescluster.aootk6w.mongodb.net/?retryWrites=true&w=majority`,
+{
+    useNewUrlParser: true, 
+    useUnifiedTopology: true
+})
 .then(data => {
     console.log('connected!')
 })
@@ -27,7 +31,6 @@ mongoose.connect(`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@mikescluster.aootk
 })
 console.log('wtf')
 app.use((req, res, next) => {
-    console.log('lets check')
     res.setHeader('Access-Control-Allow-Origin', "*");
     res.setHeader(
         'Access-Control-Allow-Headers',
