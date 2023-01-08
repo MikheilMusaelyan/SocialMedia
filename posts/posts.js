@@ -37,10 +37,8 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             creatorNickname: usersData.nickname,
             commentsLength: 0
         });
-        db.posts.insertOne(
-            addedPost, 
-            { ordered: true, before: [] }
-        ).then(data => {
+        
+        addedPost.save().then(data => {
             usersData.updateOne({$push: {"afterLogin.posts": addedPost}}).then(d => {
                 res.status(201).json({
                     data: data
