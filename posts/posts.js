@@ -38,7 +38,9 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             commentsLength: 0
         });
         
-        addedPost.save().then(data => {
+        Post.updateOne(
+            {$push: {'posts': addedPost}}
+        ).then(data => {
             usersData.updateOne({$push: {"afterLogin.posts": addedPost}}).then(d => {
                 res.status(201).json({
                     data: data
@@ -60,7 +62,7 @@ router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) =
         const url = req.protocol + "://" + req.get('host');
         imagePath = url + '/images/' + req.file.filename;
     };
-    Post.findOne({creatorId: req.userData.userId, _id: req.body.postID})
+    Post.findOne({'posts.creatorId': req.userData.userId, 'posts._id': req.body.postID})
     .then(data => {
         User.findOneAndUpdate(
             {
@@ -99,7 +101,7 @@ router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) =
 
 
 router.delete('/delete/:id', checkAuth, (req, res, next) => {
-    Post.deleteOne({_id: req.params.id, creatorId: req.userData.userId})
+    Post.deleteOne({'posts._id': req.params.id, 'posts.creatorId': req.userData.userId})
     .then(response => {
         User.findOneAndUpdate(
             {_id: req.userData.userId},
@@ -140,7 +142,7 @@ router.get('/singlePost', (req, res) => {
     const increasingAmount = +req.query.increasingAmount
     Post.aggregate([
     {
-        $match: {_id: new ObjectId(req.query.postId)}
+        $match: {'posts._id': new ObjectId(req.query.postId)}
     },
     {
         $project: {
@@ -165,25 +167,11 @@ router.get('/singlePost', (req, res) => {
     })
 })
 
-router.delete('', (req, res) => {
-    User.updateMany({'afterLogin.posts': []}).then(data => {
-        console.log(data)
-    })
-    Post.deleteMany()
-    .then(data => {
-    })
-    .catch(err => {
-        res.status(501).json({
-            err
-        })
-    })
-})
-
 router.get('/:postsToReturn', (req, res, next) => {
     Post.find()
     .then(posts => {
         res.status(200).json({
-            posts: posts
+            posts: posts.posts
         })
     })
     .catch(err => {
@@ -203,7 +191,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
         if(userProfilePic == undefined || userProfilePic == null){
             userProfilePic = ""
         }
-        Post.findOne({_id: req.params.postId})
+        Post.findOne({'posts._id': req.params.postId})
         .then(post => {
             const url = req.protocol + "://" + req.get('host');
             let optUrl;
@@ -288,7 +276,7 @@ router.post('/reply', checkAuth, upload.single('image'),
             date: Date.now()
         });
         Post.findOneAndUpdate(
-            { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
+            { 'posts._id': req.query.postId, "posts.comments._id": new ObjectId(req.query.commentId)},
             { $push: {"comments.$.replies": replier}},
             { returnOriginal: false },
             (error, post) => {
@@ -311,7 +299,7 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
     } 
     Post.findOneAndUpdate(
         {
-            _id: new ObjectId(req.body.postID),
+            'posts._id': new ObjectId(req.body.postID),
             // '$comments.$[cId].replies.$[rId].creatorId': req.userData.userId
         },
         {
@@ -347,7 +335,7 @@ router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) 
     } 
     Post.findOneAndUpdate(
         {
-            _id: new ObjectId(req.body.postID),
+            'posts._id': new ObjectId(req.body.postID),
             // '$comments.$[cId].creatorId': req.userData.userId
         },
         {
@@ -377,7 +365,7 @@ router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) 
 router.put('/delete-comment', checkAuth, (req, res) => {
     Post.findOneAndUpdate(
         {
-            _id: req.body.postId
+            'posts._id': req.body.postId
         },
         {
             $pull: {"comments": {"_id": new ObjectId(req.body.commentId)}},
@@ -400,7 +388,7 @@ router.put('/delete-comment', checkAuth, (req, res) => {
 
 router.put('/delete-reply', checkAuth, (req, res) => {
     Post.findOneAndUpdate(
-        {_id: req.body.postId},
+        {'posts._id': req.body.postId},
         { $pull: 
             {"comments.$[cId].replies": {"_id": new ObjectId(req.body.replyId)}}
         },
