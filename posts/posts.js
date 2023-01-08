@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Post = require('./post-mongoose');
+const Post = require('./singlepost-mongoose');
+// const Post = require('./post-mongoose');
 const User = require('../auth/auth-mongoose')
 const checkAuth = require('../auth/auth-validator');
 const Comment = require('../comments/comments-mongoose');
@@ -52,7 +53,6 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         })
     })
 });
-
 
 router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) => {
     let imagePath = req.body.updatedImage;
