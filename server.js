@@ -93,7 +93,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('sendMessage', (socketId, message) => {
-        socket.to(socketId).emit('recieveMessage', message);
+        io.to(socketId).emit('recieveMessage', message);
     })
 })
 
