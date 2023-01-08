@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('./singlepost-mongoose');
-// const Post = require('./post-mongoose');
+const Posts = require('./post-mongoose');
 const User = require('../auth/auth-mongoose')
 const checkAuth = require('../auth/auth-validator');
 const Comment = require('../comments/comments-mongoose');
@@ -39,7 +39,9 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             commentsLength: 0
         });
         
-        addedPost.save().then(data => {
+        Posts.updateOne({
+            $push: {'posts': addedPost}
+        }).then(data => {
             usersData.updateOne({$push: {"afterLogin.posts": addedPost}}).then(d => {
                 res.status(201).json({
                     data: data
@@ -180,10 +182,10 @@ router.delete('', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
-    Post.find()
+    Posts.find()
     .then(posts => {
         res.status(200).json({
-            posts: posts
+            posts: posts.posts
         })
     })
     .catch(err => {
