@@ -40,7 +40,6 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         });
         
         Posts.updateOne(
-            {},
             {
                 $push: {'posts': addedPost}
             }
@@ -52,12 +51,14 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             })
         })
         .catch(err => {
+            console.log(err)
             res.status(500).json({
                 err
             })
         })
     })
 });
+
 
 router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) => {
     let imagePath = req.body.updatedImage;
