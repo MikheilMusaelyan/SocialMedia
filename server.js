@@ -92,8 +92,8 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('sendMessage', (socketId, message) => {
-        io.to(socketId).emit('recieveMessage', message);
+    socket.on('sendMessage', (socketId, myId) => {
+        io.to(socketId).emit('recieveMessage', myId);
     })
 })
 
