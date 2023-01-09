@@ -11,6 +11,8 @@ var ObjectId = require('mongodb').ObjectId;
 
 const upload = exportsFile.upload;
 
+console.log(Posts)
+
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let optUrl;
     if(req.file && typeof(req.file) === "object"){
