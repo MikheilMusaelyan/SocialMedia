@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Post = require('./singlepost-mongoose');
-const Posts = require('./post-mongoose');
+const Post = require('./post-mongoose');
 const User = require('../auth/auth-mongoose')
 const checkAuth = require('../auth/auth-validator');
 const Comment = require('../comments/comments-mongoose');
@@ -10,8 +9,6 @@ const exportsFile = require('../exports')
 var ObjectId = require('mongodb').ObjectId;
 
 const upload = exportsFile.upload;
-
-console.log(Posts)
 
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let optUrl;
@@ -41,12 +38,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             commentsLength: 0
         });
         
-        Posts.updateOne(
-            {},
-            {
-                $push: {posts: addedPost}
-            }
-        ).then(data => {
+        addedPost.save().then(data => {
             usersData.updateOne({$push: {"afterLogin.posts": addedPost}}).then(d => {
                 res.status(201).json({
                     data: data
@@ -54,7 +46,6 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             })
         })
         .catch(err => {
-            console.log(err)
             res.status(500).json({
                 err
             })
@@ -189,10 +180,10 @@ router.delete('', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
-    Posts.find()
+    Post.find()
     .then(posts => {
         res.status(200).json({
-            posts: posts.posts
+            posts: posts
         })
     })
     .catch(err => {
