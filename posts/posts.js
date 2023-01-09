@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Post = require('./post-mongoose');
+const Post = require('./singlepost-mongoose');
 const User = require('../auth/auth-mongoose')
 const checkAuth = require('../auth/auth-validator');
 const Comment = require('../comments/comments-mongoose');
