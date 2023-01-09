@@ -40,8 +40,9 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         });
         
         Posts.updateOne(
+            {},
             {
-                $push: {'posts': addedPost}
+                $push: {posts: addedPost}
             }
         ).then(data => {
             usersData.updateOne({$push: {"afterLogin.posts": addedPost}}).then(d => {
