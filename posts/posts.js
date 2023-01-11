@@ -180,7 +180,7 @@ router.delete('', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
-    Post.find().skip(Post.count() - 10).limit(10)
+    Post.find()
     .then(posts => {
         res.status(200).json({
             posts: posts
