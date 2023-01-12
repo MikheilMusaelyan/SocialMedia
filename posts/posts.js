@@ -406,15 +406,14 @@ router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) 
 
 router.put('/delete-comment', checkAuth, (req, res) => {
     Post.findOneAndUpdate(
-    {
-    _id: new ObjectId(req.body.postId),
-    'comments': { $elemMatch: { _id: new ObjectId(req.body.commentId) } }
-}, {
-    $inc: {
-        'commentsLength': -{$size: '$comments.$.replies'}
-    }
-}
-        )
+        {
+            _id: req.body.postId
+        },
+        {
+            $pull: {"comments": {"_id": new ObjectId(req.body.commentId)}},
+            $inc: {'commentsLength': -1}
+        },
+    )
     .then(post => {
         res.status(201).json({
             post
