@@ -308,16 +308,16 @@ router.post('/reply', checkAuth, upload.single('image'),
                 postCommentsC: replier
             })
             
-            // user.updateOne(
-            //     {'afterLogin.posts._id': new ObjectId(req.body.postId)},
-            //     {$inc: {'$commentsLength' : 1}},
-            // )
-            // .then()
-            // .catch(err => {
-            //     return res.status(400).json({
-            //         message: err
-            //     })
-            // })
+            user.updateOne(
+                {'afterLogin.posts._id': new ObjectId(req.body.postId)},
+                {$inc: {'$commentsLength' : 1}},
+            )
+            .then()
+            .catch(err => {
+                return res.status(400).json({
+                    message: err
+                })
+            })
         })
         .catch(err => {
             res.status(500).json({
