@@ -209,7 +209,7 @@ router.get('/mySelf', checkAuth, (req, res) => {
     User.aggregate([
         {
             $match: {
-                _id: new ObjectId(req.userData.userId)
+                "_id": new ObjectId(req.userData.userId)
             }
         },
         {
