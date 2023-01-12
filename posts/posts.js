@@ -180,10 +180,21 @@ router.delete('', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
-    Post.find(
-        {},
-        {'$comments': 0}
-    )
+    Post.aggregate([
+        {
+            $project: {
+                '$post': 1,
+                '$image': 1,
+                '$comments': 0,
+                '$likes': 1,
+                '$creatorId': 1,
+                '$date': 1,
+                'creatorProfilePic': 1,
+                'creatorNickname': 1,
+                'commentsLength': 1
+            }
+        },
+    ])
     .then(posts => {
         res.status(200).json({
             posts: posts
