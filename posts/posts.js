@@ -180,7 +180,10 @@ router.delete('', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
-    Post.find()
+    Post.find(
+        {},
+        {'$comments': 0}
+    )
     .then(posts => {
         res.status(200).json({
             posts: posts
