@@ -295,6 +295,18 @@ router.post('/reply', checkAuth, upload.single('image'),
             creatorNickname: userNickname,
             date: Date.now()
         });
+
+        user.updateOne(
+            {'afterLogin.posts._id': new ObjectId(req.body.postId)},
+            {$inc: {'$commentsLength' : 1}},
+        )
+        .then()
+        .catch(err => {
+            return res.status(400).json({
+                message: err
+            })
+        })
+
         Post.findOneAndUpdate(
             { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
             { 
@@ -306,17 +318,6 @@ router.post('/reply', checkAuth, upload.single('image'),
         .then(() => {
             res.status(201).json({
                 postCommentsC: replier
-            })
-            
-            user.updateOne(
-                {'afterLogin.posts._id': new ObjectId(req.body.postId)},
-                {$inc: {'$commentsLength' : 1}},
-            )
-            .then()
-            .catch(err => {
-                return res.status(400).json({
-                    message: err
-                })
             })
         })
         .catch(err => {
