@@ -270,7 +270,13 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
 
 router.post('/reply', checkAuth, upload.single('image'),
 (req, res, next) => {
-    User.findOne({_id: req.userData.userId}).then(user => {
+    User.findOneAndUpdate(
+        {
+            _id: req.userData.userId,
+            'afterLogin.posts._id': new ObjectId(req.query.postId)
+        },
+        {$inc: {'$commentsLength' : 1}},
+    ).then(user => {
         const url = req.protocol + "://" + req.get('host');
         let optUrl;
         if(req.file && typeof(req.file) === "object"){
@@ -296,16 +302,15 @@ router.post('/reply', checkAuth, upload.single('image'),
             date: Date.now()
         });
 
-        user.updateOne(
-            {'afterLogin.posts._id': new ObjectId(req.query.postId)},
-            {$inc: {'$commentsLength' : 1}},
-        )
-        .then()
-        .catch(err => {
-            return res.status(400).json({
-                message: err
-            })
-        })
+        // user.updateOne(
+            
+        // )
+        // .then()
+        // .catch(err => {
+        //     return res.status(400).json({
+        //         message: err
+        //     })
+        // })
 
         Post.findOneAndUpdate(
             { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
