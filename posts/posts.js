@@ -219,11 +219,15 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
             }
             // image checked
             // we have to increase comments in USER's posts to just show amount
-            user.findOneAndUpdate(
+            user.updateOne(
                 {'afterLogin.posts._id': new ObjectId(req.params.postId)},
                 {$inc: {'commentsLength' : 1}},
             )
-            .then();
+            .then(d => {
+                console.log(d)
+            }).catch(err => {
+                console.log(err)
+            })
 
             const commentAdded = new Comment({
                 comment: req.body.comment,
