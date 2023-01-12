@@ -220,12 +220,11 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
             }
             // image checked
             // we have to increase comments in USER's posts to just show amount
-            // User.findOneAndUpdate(
-            //     {_id: post.creatorId, '$afterLogin.posts._id': new ObjectId(req.params.postId)},
-            //     {$push: {'comments' : 1}},
-            // ).then(d => {
-            //     console.log(d.afterLogin.posts[d.afterLogin.posts.length - 1], 'esaa usershi')
-            // });
+            User.findOneAndUpdate(
+                {_id: post.creatorId, '$afterLogin.posts._id': new ObjectId(req.params.postId)},
+                {$inc: {'commentsLength' : 1}},
+            )
+            .then();
 
             const commentAdded = new Comment({
                 comment: req.body.comment,
@@ -295,17 +294,33 @@ router.post('/reply', checkAuth, upload.single('image'),
         });
         Post.findOneAndUpdate(
             { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
-            { $push: {"comments.$.replies": replier}},
+            { 
+                $push: {"comments.$.replies": replier},
+                $inc: {'commentsLength': 1}
+            },
             { returnOriginal: false },
-            (error, post) => {
-                if(error){
-                    console.log(error)
-                } 
-                return res.status(201).json({
-                    postCommentsC: replier
-                })
-            }
         )
+        .then(() => {
+            res.status(201).json({
+                postCommentsC: replier
+            })
+            
+            user.updateOne(
+                {'afterLogin.posts._id': new ObjectId(req.body.postId)},
+                {$inc: {'$commentsLength' : 1}},
+            )
+            .then()
+            .catch(err => {
+                return res.status(400).json({
+                    message: err
+                })
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                err
+            })
+        })
     })
 });
 
@@ -391,15 +406,24 @@ router.put('/delete-comment', checkAuth, (req, res) => {
         },
     )
     .then(post => {
+        res.status(201).json({
+            post
+        });
+
         User.findOneAndUpdate(
             {_id: post.creatorId, 'afterLogin.posts._id': new ObjectId(req.body.postId)},
             {$inc: {'$commentsLength' : -1}},
-        ).then(d => {
-            console.log(d.afterLogin.posts, 'what')
-        });
-
-        res.status(201).json({
-            post
+        )
+        .then()
+        .catch(err => {
+            return res.status(400).json({
+                message: err
+            })
+        })
+    })
+    .catch(err => {
+        return res.status(400).json({
+            message: err
         })
     })
 })
@@ -412,14 +436,31 @@ router.put('/delete-reply', checkAuth, (req, res) => {
         },
         { arrayFilters: [
             {"cId._id": new ObjectId(req.body.commentId)},
-        ]},
-        (err, post) => {
-            let comments = post.comments;
-            res.status(201).json({
-                comments
-            })
-        }
+        ]}
     )
+    .then(post => {
+        let comments = post.comments;
+        res.status(201).json({
+            comments
+        });
+
+
+        User.findOneAndUpdate(
+            {_id: post.creatorId, 'afterLogin.posts._id': new ObjectId(req.body.postId)},
+            {$inc: {'$commentsLength' : -1}},
+        )
+        .then()
+        .catch(err => {
+            return res.status(400).json({
+                message: err
+            })
+        })
+    })
+    .catch(err => {
+        res.status(400).json({
+            message: err
+        })
+    })
 })
 
 
