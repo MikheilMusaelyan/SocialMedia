@@ -187,7 +187,6 @@ router.get('/:postsToReturn', (req, res, next) => {
         }
     }
     ]).then(posts => {
-        console.log(posts)
         res.status(200).json({
             posts: posts
         })
