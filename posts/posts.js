@@ -440,8 +440,15 @@ router.put('/delete-comment', checkAuth, (req, res) => {
 router.put('/delete-reply', checkAuth, (req, res) => {
     Post.findOneAndUpdate(
         {_id: req.body.postId},
-        { $pull: 
-            {"comments.$[cId].replies": {"_id": new ObjectId(req.body.replyId)}}
+        { 
+            $inc: {
+                'commentsLength': -1
+            },
+            $pull: {
+                "comments.$[cId].replies": {
+                    "_id": new ObjectId(req.body.replyId)
+                }
+            }
         },
         { arrayFilters: [
             {"cId._id": new ObjectId(req.body.commentId)},
