@@ -181,25 +181,13 @@ router.delete('', (req, res) => {
 
 router.get('/:postsToReturn', (req, res, next) => {
     Post.aggregate([
-        {
-            
-        },
-        {
-            $group: {
-                _id: {"$first": "_id"},
-                post: {"$first": '$post'},
-                image: {"$first": '$image'},
-                likes: {"$first": '$likes'},
-                creatorId: {"$first": '$creatorId'},
-                date: {"$first": '$date'},
-                creatorProfilePic: {"$first": '$creatorProfilePic'},
-                creatorNickname: {"$first": '$creatorNickname'},
-                commentsLength: {"$first": '$commentsLength'},
-            }
+    {
+        $project: {
+            comments: 0
         }
-    ])
-    .then(posts => {
-        console.log('tjs', posts)
+    }
+    ]).then(posts => {
+        console.log(posts)
         res.status(200).json({
             posts: posts
         })
@@ -208,7 +196,7 @@ router.get('/:postsToReturn', (req, res, next) => {
         res.status(501).json({
             err
         })
-    })
+    });
 });
 
 
