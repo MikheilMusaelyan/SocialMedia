@@ -182,20 +182,24 @@ router.delete('', (req, res) => {
 router.get('/:postsToReturn', (req, res, next) => {
     Post.aggregate([
         {
-            $project: {
-                '$post': 1,
-                '$image': 1,
-                '$comments': 0,
-                '$likes': 1,
-                '$creatorId': 1,
-                '$date': 1,
-                'creatorProfilePic': 1,
-                'creatorNickname': 1,
-                'commentsLength': 1
-            }
+            
         },
+        {
+            $group: {
+                _id: {"$first": "_id"},
+                post: {"$first": '$post'},
+                image: {"$first": '$image'},
+                likes: {"$first": '$likes'},
+                creatorId: {"$first": '$creatorId'},
+                date: {"$first": '$date'},
+                creatorProfilePic: {"$first": '$creatorProfilePic'},
+                creatorNickname: {"$first": '$creatorNickname'},
+                commentsLength: {"$first": '$commentsLength'},
+            }
+        }
     ])
     .then(posts => {
+        console.log('tjs', posts)
         res.status(200).json({
             posts: posts
         })
