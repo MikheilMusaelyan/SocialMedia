@@ -214,6 +214,7 @@ router.get('/mySelf', checkAuth, (req, res) => {
         },
         {
             $group:{
+                _id: '$_id',
                 profilePic: {'$first': '$afterLogin.profilePic'}
             }
         }
