@@ -220,8 +220,8 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
             }
             // image checked
             // we have to increase comments in USER's posts to just show amount
-            User.findOneAndUpdate(
-                {_id: post.creatorId, '$afterLogin.posts._id': new ObjectId(req.params.postId)},
+            user.findOneAndUpdate(
+                {'afterLogin.posts._id': new ObjectId(req.params.postId)},
                 {$inc: {'commentsLength' : 1}},
             )
             .then();
