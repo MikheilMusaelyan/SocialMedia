@@ -407,7 +407,7 @@ router.put('/delete-comment', checkAuth, (req, res) => {
         });
 
         User.findOneAndUpdate(
-            {_id: post.creatorId, 'afterLogin.posts._id': new ObjectId(req.body.postId)},
+            {_id: new ObjectId(post.creatorId), 'afterLogin.posts._id': new ObjectId(req.body.postId)},
             {$inc: {'$commentsLength' : -1}},
         )
         .then(d=>{
