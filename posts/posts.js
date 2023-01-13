@@ -411,6 +411,7 @@ router.put('/delete-comment', checkAuth, (req, res) => {
             {$inc: {'$commentsLength' : -1}},
         )
         .then(d=>{
+            console.log(d, 'dsaaaaaaa')
             console.log('did well on del comment')
         })
         .catch(err => {
