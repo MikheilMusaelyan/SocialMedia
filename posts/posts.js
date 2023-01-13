@@ -39,10 +39,8 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         });
         
         addedPost.save().then(data => {
-            usersData.updateOne({$push: {"afterLogin.posts": addedPost}}).then(d => {
-                res.status(201).json({
+            res.status(201).json({
                     data: data
-                })
             })
         })
         .catch(err => {
@@ -62,20 +60,6 @@ router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) =
     };
     Post.findOne({creatorId: req.userData.userId, _id: req.body.postID})
     .then(data => {
-        User.findOneAndUpdate(
-            {
-                _id: req.userData.userId, 
-                "afterLogin.posts._id": new ObjectId(req.body.postID)
-            },
-            {$set: {
-                "afterLogin.posts.$.post": req.body.updatedPost, 
-                "afterLogin.posts.$.image": imagePath
-                }
-            }
-        )
-        .then(user => {
-            console.log(user)
-        })
         data.image = imagePath;
         data.post = req.body.updatedPost
         data.save()
@@ -101,13 +85,8 @@ router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) =
 router.delete('/delete/:id', checkAuth, (req, res, next) => {
     Post.deleteOne({_id: req.params.id, creatorId: req.userData.userId})
     .then(response => {
-        User.findOneAndUpdate(
-            {_id: req.userData.userId},
-            {$pull: {"afterLogin.posts": {"_id": new ObjectId(req.params.id)}}})
-        .then(data => {
-            res.status(200).json({
-                response, data
-            })
+        res.status(200).json({
+            response
         })
         .catch(err => {
             res.status(404).json({
@@ -204,16 +183,6 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
                 optUrl = ""
             }
             // image checked
-            // we have to increase comments in USER's posts to just show amount
-            // user.updateOne(
-            //     {'afterLogin.posts._id': new ObjectId(req.params.postId)},
-            //     {$inc: {'commentsLength' : 1}},
-            // )
-            // .then(d => {
-            //     console.log(d, 'knows')
-            // }).catch(err => {
-            //     console.log(err, 'egeee', err, 'second')
-            // })
 
             const commentAdded = new Comment({
                 comment: req.body.comment,
@@ -256,14 +225,11 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
 
 router.post('/reply', checkAuth, upload.single('image'),
 (req, res, next) => {
-    User.findOneAndUpdate(
+    User.findOne(
         {
             _id: req.userData.userId,
-            'afterLogin.posts._id': new ObjectId(req.query.postId)
         },
-        {$inc: {'$commentsLength' : 1}},
     ).then(user => {
-        console.log('did well on adding reply', user)
         const url = req.protocol + "://" + req.get('host');
         let optUrl;
         if(req.file && typeof(req.file) === "object"){
@@ -288,16 +254,6 @@ router.post('/reply', checkAuth, upload.single('image'),
             creatorNickname: userNickname,
             date: Date.now()
         });
-
-        // user.updateOne(
-            
-        // )
-        // .then()
-        // .catch(err => {
-        //     return res.status(400).json({
-        //         message: err
-        //     })
-        // })
 
         Post.findOneAndUpdate(
             { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
@@ -405,21 +361,6 @@ router.put('/delete-comment', checkAuth, (req, res) => {
         res.status(201).json({
             post
         });
-
-        User.findOneAndUpdate(
-            {_id: new ObjectId(post.creatorId), 'afterLogin.posts._id': new ObjectId(req.body.postId)},
-            {$inc: {'$commentsLength' : -1}},
-        )
-        .then(d=>{
-            console.log(d, 'dsaaaaaaa')
-            console.log('did well on del comment')
-        })
-        .catch(err => {
-            console.log('did bad on del comment', err)
-            return res.status(400).json({
-                message: err
-            })
-        })
     })
     .catch(err => {
         return res.status(400).json({
@@ -450,21 +391,6 @@ router.put('/delete-reply', checkAuth, (req, res) => {
         res.status(201).json({
             comments
         });
-
-
-        User.findOneAndUpdate(
-            {_id: post.creatorId, 'afterLogin.posts._id': new ObjectId(req.body.postId)},
-            {$inc: {'$commentsLength' : -1}},
-        )
-        .then(f => {
-            console.log('gound it')
-        })
-        .catch(err => {
-            console.log('err on deleting reply', err)
-            return res.status(400).json({
-                message: err
-            })
-        })
     })
     .catch(err => {
         res.status(400).json({

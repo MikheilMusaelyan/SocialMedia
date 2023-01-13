@@ -13,8 +13,6 @@ const upload = exportsFile.upload;
 
 var ObjectId = require('mongodb').ObjectId;
 
-
-
 router.post('', (req, res, cb) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
@@ -546,7 +544,6 @@ router.put('/profilePic', checkAuth, upload.single('profilePic'), (req, res) => 
         {
             $set: {
                 'afterLogin.profilePic': profilePicture,
-                'afterLogin.posts.$[].creatorProfilePic': profilePicture
             }
         }
     )
