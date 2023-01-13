@@ -183,7 +183,7 @@ router.get('/singleUser/:userId', (req, res, cb) => {
     User.aggregate([
         {
             $match: {
-                _id: req.params.userId
+                _id: new ObjectId(req.params.userId)
             }
         },
         {
@@ -196,7 +196,7 @@ router.get('/singleUser/:userId', (req, res, cb) => {
         }
     ])
     .then(user => {
-        console.log(user)
+        console.log(user, 123)
         
         res.status(200).json({
             user
