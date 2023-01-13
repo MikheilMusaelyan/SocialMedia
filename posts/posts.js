@@ -282,34 +282,59 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
         const url = req.protocol + "://" + req.get('host');
         imagePath = url + '/images/' + req.file.filename;
     } 
+
     Post.findOneAndUpdate(
         {
             _id: new ObjectId(req.body.postID),
-            // '$comments.$[cId].replies.$[rId].creatorId': req.userData.userId
+            'comments._id': new ObjectId(req.query.commentId),
+            'comments.replies._id' : new ObjectId(req.query.replyId)
         },
         {
             $set: {
-                'comments.$[cId].replies.$[rId].comment': req.body.updatedPost,
-                'comments.$[cId].replies.$[rId].image': imagePath,
+                'comments.$.replies.$.comment': req.body.updatedPost,
+                'comments.$.replies.$.image': imagePath
             }
-        },
-        {
-            arrayFilters: [
-                {'cId._id': new ObjectId(req.query.commentId)},
-                {'rId._id': new ObjectId(req.query.replyId)},
-            ]
         }
-    )
-    .then(data => {
+    ).then(data => {
         res.status(201).json({
             message: 'reply edited'
         })
     })
     .catch(err => {
-        res.status(501).json({
+        console.log(err)
+        res.status(400).json({
             err
         })
     })
+
+    // Post.findOneAndUpdate(
+    //     {
+    //         _id: new ObjectId(req.body.postID),
+    //         // '$comments.$[cId].replies.$[rId].creatorId': req.userData.userId
+    //     },
+    //     {
+    //         $set: {
+    //             'comments.$[cId].replies.$[rId].comment': req.body.updatedPost,
+    //             'comments.$[cId].replies.$[rId].image': imagePath,
+    //         }
+    //     },
+    //     {
+    //         arrayFilters: [
+    //             {'cId._id': new ObjectId(req.query.commentId)},
+    //             {'rId._id': new ObjectId(req.query.replyId)},
+    //         ]
+    //     }
+    // )
+    // .then(data => {
+    //     res.status(201).json({
+    //         message: 'reply edited'
+    //     })
+    // })
+    // .catch(err => {
+    //     res.status(501).json({
+    //         err
+    //     })
+    // })
 })
 
 router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) => {

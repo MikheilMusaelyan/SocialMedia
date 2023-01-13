@@ -158,26 +158,6 @@ router.post('/login', (req, res, cb) => {
 
 
 router.get('/singleUser/:userId', (req, res, cb) => {
-    // usr
-    // User.aggregate([
-    //     {
-    //         $match: {
-    //             _id: req.params.userId
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: "$_id", 
-    //             afterLogin: {'$first': '$afterLogin'},
-    //             nickname: {'$first': '$nickname'},
-    //             userId: {'$first': '$_id'}
-    //         }
-    //     }
-    // ])
-    // .then(data => {
-    //     console.log('dahdsah', data)
-    // })
-
     User.aggregate([
         {
             $match: {
@@ -194,7 +174,12 @@ router.get('/singleUser/:userId', (req, res, cb) => {
         }
     ])
     .then(user => {
-        console.log(user[0], user)
+        Post.find(
+            {'creatorId': req.params.userId}
+        ).then(usersPosts => {
+            console.log(usersPosts, 'aaaaaaaaaaaaaaa')
+        })
+
         let returnUser = user[0]
         res.status(200).json({
             returnUser
