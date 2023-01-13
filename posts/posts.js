@@ -212,7 +212,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
             .then(d => {
                 console.log(d, 'knows')
             }).catch(err => {
-                console.log(err)
+                console.log(err, 'egeee')
             })
 
             const commentAdded = new Comment({

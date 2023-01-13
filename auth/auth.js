@@ -220,6 +220,7 @@ router.get('/mySelf', checkAuth, (req, res) => {
         }
     ])
     .then(user => {
+        console.log(user, 'user!')
         res.status(201).json({
             user
         })
