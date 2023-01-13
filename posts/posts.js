@@ -285,7 +285,7 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
 
     Post.findOneAndUpdate(
         {
-            _id: req.body.postID, comments: { $elemMatch: { _id: req.query.commentId, replies: { $elemMatch: { _id: req.query.replyId } } } }
+            _id: new ObjectId(req.body.postID), comments: { $elemMatch: { _id: req.query.commentId, replies: { $elemMatch: { _id: req.query.replyId } } } }
         },
         {
             $set: {
