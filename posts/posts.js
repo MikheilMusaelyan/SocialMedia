@@ -165,20 +165,6 @@ router.get('/singlePost', (req, res) => {
     })
 })
 
-router.delete('', (req, res) => {
-    User.updateMany({'afterLogin.posts': []}).then(data => {
-        console.log(data)
-    })
-    Post.deleteMany()
-    .then(data => {
-    })
-    .catch(err => {
-        res.status(501).json({
-            err
-        })
-    })
-})
-
 router.get('/:postsToReturn', (req, res, next) => {
     Post.aggregate([
     {
@@ -224,7 +210,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
                 {$inc: {'commentsLength' : 1}},
             )
             .then(d => {
-                console.log(d)
+                console.log(d, 'knows')
             }).catch(err => {
                 console.log(err)
             })
