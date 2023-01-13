@@ -196,6 +196,7 @@ router.get('/singleUser/:userId', (req, res, cb) => {
         }
     ])
     .then(user => {
+        console.log(user[0], user)
         let returnUser = user[0]
         res.status(200).json({
             returnUser
