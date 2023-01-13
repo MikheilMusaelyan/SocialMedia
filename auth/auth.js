@@ -196,10 +196,9 @@ router.get('/singleUser/:userId', (req, res, cb) => {
         }
     ])
     .then(user => {
-        console.log(user, 123)
-        
+        let returnUser = user[0]
         res.status(200).json({
-            user
+            returnUser
         })
     })
     .catch(err => {
