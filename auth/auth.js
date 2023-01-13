@@ -180,15 +180,26 @@ router.get('/singleUser/:userId', (req, res, cb) => {
     //     console.log('dahdsah', data)
     // })
 
-    User.findOne({_id: req.params.userId})
-    .then(user => {
-        const returnUser = {
-            afterLogin: user.afterLogin,
-            nickname: user.nickname,
-            userId: user._id
+    User.aggregate([
+        {
+            $match: {
+                _id: req.params.userId
+            }
+        },
+        {
+            $group: {
+                _id : "$_id",
+                afterLogin: {'$first' : '$afterLogin'},
+                nickname: {"$first": '$nickname'},
+                userId: {"$first": '$userId'}
+            }
         }
+    ])
+    .then(user => {
+        console.log(user)
+        
         res.status(200).json({
-            returnUser
+            user
         })
     })
     .catch(err => {
