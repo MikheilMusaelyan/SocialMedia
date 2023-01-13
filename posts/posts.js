@@ -263,6 +263,7 @@ router.post('/reply', checkAuth, upload.single('image'),
         },
         {$inc: {'$commentsLength' : 1}},
     ).then(user => {
+        console.log('did well on adding reply', user)
         const url = req.protocol + "://" + req.get('host');
         let optUrl;
         if(req.file && typeof(req.file) === "object"){
@@ -409,8 +410,11 @@ router.put('/delete-comment', checkAuth, (req, res) => {
             {_id: post.creatorId, 'afterLogin.posts._id': new ObjectId(req.body.postId)},
             {$inc: {'$commentsLength' : -1}},
         )
-        .then()
+        .then(d=>{
+            console.log('did well on del comment')
+        })
         .catch(err => {
+            console.log('did bad on del comment', err)
             return res.status(400).json({
                 message: err
             })
@@ -451,8 +455,11 @@ router.put('/delete-reply', checkAuth, (req, res) => {
             {_id: post.creatorId, 'afterLogin.posts._id': new ObjectId(req.body.postId)},
             {$inc: {'$commentsLength' : -1}},
         )
-        .then()
+        .then(f => {
+            console.log('gound it')
+        })
         .catch(err => {
+            console.log('err on deleting reply', err)
             return res.status(400).json({
                 message: err
             })
