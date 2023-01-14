@@ -167,20 +167,21 @@ router.get('/singleUser/:userId', (req, res, cb) => {
                 _id : "$_id",
                 afterLogin: {'$first' : '$afterLogin'},
                 nickname: {"$first": '$nickname'},
-                userId: {"$first": '$userId'}
             }
         }
     ])
     .then(user => {
+        let returnUser = user[0];
+        let posts;
         Post.find(
             {'creatorId': req.params.userId}
         ).then(usersPosts => {
-            console.log(usersPosts, 'aaaaaaaaaaaaaaa', user[0])
+            posts = usersPosts
         })
 
-        let returnUser = user[0]
         res.status(200).json({
-            returnUser
+            returnUser,
+            posts
         })
     })
     .catch(err => {
