@@ -175,13 +175,13 @@ router.get('/singleUser/:userId', (req, res, cb) => {
         let posts;
         Post.find(
             {'creatorId': req.params.userId}
-        ).then(usersPosts => {
-            posts = usersPosts
-        })
-
-        res.status(200).json({
-            returnUser,
-            posts
+        )
+        .then(usersPosts => {
+            posts = usersPosts;
+            res.status(200).json({
+                returnUser,
+                posts
+            })
         })
     })
     .catch(err => {
