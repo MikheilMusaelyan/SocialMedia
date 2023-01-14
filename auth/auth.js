@@ -186,6 +186,7 @@ router.get('/singleUser/:userId', (req, res, cb) => {
         }
         ])
         .then(usersPosts => {
+            console.log(usersPosts)
             posts = usersPosts;
             res.status(200).json({
                 returnUser,
