@@ -173,9 +173,18 @@ router.get('/singleUser/:userId', (req, res, cb) => {
     .then(user => {
         let returnUser = user[0];
         let posts;
-        Post.find(
-            {'creatorId': req.params.userId}
-        )
+        Post.aggregate([
+        {
+            $match: {
+                'creatorId': req.params.userId
+            }
+        },
+        {
+            $project: {
+                comments: 0
+            }
+        }
+        ])
         .then(usersPosts => {
             posts = usersPosts;
             res.status(200).json({

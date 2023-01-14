@@ -40,7 +40,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         
         addedPost.save().then(data => {
             res.status(201).json({
-                    data: data
+                data: data
             })
         })
         .catch(err => {
@@ -284,8 +284,7 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
     } 
     Post.findOneAndUpdate(
         {
-            _id: new ObjectId(req.body.postID),
-            // '$comments.$[cId].replies.$[rId].creatorId': req.userData.userId
+            _id: new ObjectId(req.body.postID)
         },
         {
             $set: {
