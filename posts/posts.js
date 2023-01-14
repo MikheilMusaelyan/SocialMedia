@@ -282,23 +282,38 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
         const url = req.protocol + "://" + req.get('host');
         imagePath = url + '/images/' + req.file.filename;
     } 
+    // Post.findOneAndUpdate(
+    //     {
+    //         _id: new ObjectId(req.body.postID),
+    //     },
+    //     {
+    //         $set: {
+    //             'comments.$[cId].replies.$[rId].comment': req.body.updatedPost,
+    //             'comments.$[cId].replies.$[rId].image': imagePath,
+    //         }
+    //     },
+    //     {
+    //         arrayFilters: [
+    //             {'cId._id': new ObjectId(req.query.commentId)},
+    //             {'rId._id': new ObjectId(req.query.replyId)},
+    //         ]
+    //     }
+    // )
     Post.findOneAndUpdate(
-        {
-            _id: new ObjectId(req.body.postID),
-            // '$comments.$[cId].replies.$[rId].creatorId': req.userData.userId
-        },
-        {
-            $set: {
-                'comments.$[cId].replies.$[rId].comment': req.body.updatedPost,
-                'comments.$[cId].replies.$[rId].image': imagePath,
-            }
-        },
-        {
-            arrayFilters: [
-                {'cId._id': new ObjectId(req.query.commentId)},
-                {'rId._id': new ObjectId(req.query.replyId)},
-            ]
+    {
+        _id: new ObjectId(req.body.postID), 
+        comments: { 
+            $elemMatch: { 
+                _id: new ObjectId(req.query.commentId),
+                
+                replies: { 
+                    $elemMatch: { 
+                        _id: new ObjectId(req.query.replyId)
+                    } 
+                } 
+            } 
         }
+    }
     )
     .then(data => {
         res.status(201).json({
@@ -311,6 +326,26 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
         })
     })
 })
+
+// Post.findOneAndUpdate(
+//     {
+//         _id: new ObjectId(req.body.postID), 
+//         comments: { 
+//             $elemMatch: { 
+//                 _id: new ObjectId(req.query.commentId),
+                
+//                 replies: { 
+//                     $elemMatch: { 
+//                         _id: new ObjectId(req.query.replyId)
+//                     } 
+//                 } 
+//             } 
+//         }
+//     }
+// )
+// .then(data => {
+//     console.log(data)
+// })
 
 router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) => {
     let imagePath = req.body.updatedImage;
