@@ -16,8 +16,7 @@ var ObjectId = require('mongodb').ObjectId;
 router.post('', (req, res, cb) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
-        console.log(req.body.afterLogin)
-        let userC = new User({
+        new User({
             email: req.body.email,
             nickname: req.body.nickname,
             password: hash,
@@ -113,7 +112,6 @@ router.post('/login', (req, res, cb) => {
             }
         ])
         .then(users => {
-
             for (let user of users) {
                 updatedUsers.push(user.socketId);
             };
@@ -177,7 +175,7 @@ router.get('/singleUser/:userId', (req, res, cb) => {
         Post.find(
             {'creatorId': req.params.userId}
         ).then(usersPosts => {
-            console.log(usersPosts, 'aaaaaaaaaaaaaaa')
+            console.log(usersPosts, 'aaaaaaaaaaaaaaa', user[0])
         })
 
         let returnUser = user[0]
