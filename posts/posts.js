@@ -154,6 +154,7 @@ router.get('/:postsToReturn', (req, res, next) => {
             { $project: { comments: 0 } }
         ])
         .then(posts => {
+            console.log(posts)
             res.status(200).json({
                 posts: posts
             })
