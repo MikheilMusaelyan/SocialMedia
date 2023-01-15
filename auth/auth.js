@@ -156,13 +156,6 @@ router.post('/login', (req, res, cb) => {
 
 
 router.get('/singleUser', (req, res, cb) => {
-    console.log(
-        typeof(req.query.bool), 
-        req.query.bool === true, 
-        req.query.bool === false,
-        req.query.bool === 'true', 
-        req.query.bool === 'false', 
-    )
     User.aggregate([
         {
             $match: {
@@ -179,28 +172,35 @@ router.get('/singleUser', (req, res, cb) => {
     ])
     .then(user => {
         let returnUser = user[0];
-        let posts;
-        Post.aggregate([
-        {
-            $match: {
-                'creatorId': req.query.id
+
+        if(req.query.bool === 'true'){
+            Post.aggregate([
+            {
+                $match: {
+                    'creatorId': req.query.id
+                }
+            },
+            {
+                $project: {
+                    comments: 0
+                }
             }
-        },
-        {
-            $project: {
-                comments: 0
-            }
-        }
-        ])
-        .then(usersPosts => {
-            posts = usersPosts;
-            res.status(200).json({
-                returnUser,
-                posts
+            ])
+            .then(posts => {
+                res.status(200).json({
+                    returnUser,
+                    posts
+                })
             })
-        })
+            return
+        } else if(req.query.bool === 'false'){
+            res.status(200).json({
+                returnUser
+            })
+        }
     })
     .catch(err => {
+        console.log(err)
         res.status(501).json({
             message: 'User not found'
         });
