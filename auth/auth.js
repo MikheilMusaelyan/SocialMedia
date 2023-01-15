@@ -554,6 +554,7 @@ router.put('/profilePic', checkAuth, upload.single('profilePic'), (req, res) => 
         }
     )
     .then(me => {
+        console.log(req.userData.userId, profilePicture)
         Post.updateMany(
             {'creatorId': req.userData.userId},
             {
