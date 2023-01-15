@@ -148,6 +148,14 @@ router.get('/:postsToReturn', (req, res, next) => {
     const increasingAmount = 40;
     Post.count().then(postCount => {
         const toSkip = postCount - increasingAmount;
+        console.log('mocmdeba')
+        if(toSkip <= 0){
+            res.status(200).json({
+                posts: []
+            })
+            return
+        }
+        console.log('faidisadas')
         Post.aggregate([
             { $skip: toSkip },
             { $limit: 20 },
