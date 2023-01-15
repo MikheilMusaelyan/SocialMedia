@@ -243,6 +243,8 @@ router.get('/mySelf', checkAuth, (req, res) => {
 // User.updateMany({$set: {'afterLogin.gotReqs': []}}).then(data=>console.log(data))
 
 router.put('/addFriend', checkAuth, (req, res) => {
+    console.log(req.body, 'ad d a friend')
+
     let haveSent = false;
     let haveRecieved = false;
     let areFriends = false;
@@ -251,6 +253,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
     }
     User.findOne({_id: req.userData.userId})
     .then(me => {
+        console.log(me.afterLogin, 'iihh')
         for(let i of me.afterLogin.friends){
             if(i === req.body.userId){
                 removeFriend();
@@ -609,7 +612,6 @@ router.put('/disconnect', checkAuth, (req, res) => {
         }
     )
     .then(data => {
-        console.log(data, 'appply')
         res.status(201).json({
             message: 'disconnected'
         })
