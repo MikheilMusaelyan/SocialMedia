@@ -149,12 +149,12 @@ router.get('/:postsToReturn', (req, res, next) => {
     Post.count().then(postCount => {
         const toSkip = postCount - increasingAmount;
         Post.aggregate([
-            { $skip: 20 },
+            { $skip: toSkip },
             { $limit: 20 },
             { $project: { comments: 0 } }
         ])
-        .then(posts => {
-            console.log(posts)
+        .then(POSTS => {
+            const posts = POSTS.reverse();
             res.status(200).json({
                 posts: posts
             })
