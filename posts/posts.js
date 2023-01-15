@@ -145,25 +145,25 @@ router.get('/singlePost', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
-    let increasingAmount = 5;
+    const increasingAmount = req.query.incAmount;
     Post.count().then(postCount => {
-        let toSkip = postCount - increasingAmount;
-    Post.aggregate([
-        { $skip: toSkip},
-        { $limit: 20 },
-    ])
-    .then(posts => {
-        console.log(posts)
-        res.status(200).json({
-            posts: posts
+        const toSkip = postCount - increasingAmount;
+        Post.aggregate([
+            { $skip: 20 },
+            { $limit: 20 },
+            { $project: { comments: 0 } }
+        ])
+        .then(posts => {
+            res.status(200).json({
+                posts: posts
+            })
         })
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(501).json({
-            err
-        })
-    });
+        .catch(err => {
+            console.log(err)
+            res.status(501).json({
+                err
+            })
+        });
     })
 });
 
