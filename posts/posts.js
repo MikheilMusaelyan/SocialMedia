@@ -146,32 +146,43 @@ router.get('/singlePost', (req, res) => {
 
 router.get('/allPosts/:incAmount', (req, res, next) => {
     const increasingAmount = +req.params.incAmount;
-    Post.count().then(postCount => {
-        const toSkip = postCount - increasingAmount;
-        if(toSkip <= 0){
-            res.status(200).json({
-                posts: []
-            })
-            return
-        };
-        Post.aggregate([
-            { $skip: toSkip },
-            { $limit: 20 },
-            { $project: { comments: 0 } }
-        ])
-        .then(POSTS => {
-            const posts = POSTS.reverse();
-            res.status(200).json({
-                posts: posts
-            })
+    Post.find().toArray().reverse().then(data => {
+        res.status(200).json({
+            posts: data
         })
-        .catch(err => {
-            console.log(err)
-            res.status(501).json({
-                err
-            })
-        });
     })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            err
+        })
+    })
+    // Post.count().then(postCount => {
+    //     const toSkip = postCount - increasingAmount;        
+    //     if(toSkip <= 0){
+    //         res.status(200).json({
+    //             posts: []
+    //         });
+    //         return;
+    //     };
+    //     Post.aggregate([
+    //         { $skip: toSkip },
+    //         { $limit: 20 },
+    //         { $project: { comments: 0 } }
+    //     ])
+    //     .then(POSTS => {
+    //         const posts = POSTS.reverse();
+    //         res.status(200).json({
+    //             posts: posts
+    //         });
+    //     })
+    //     .catch(err => {
+    //         console.log(err)
+    //         res.status(501).json({
+    //             err
+    //         })
+    //     });
+    // });
 });
 
 
