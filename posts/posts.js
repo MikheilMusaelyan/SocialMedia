@@ -144,18 +144,16 @@ router.get('/singlePost', (req, res) => {
     })
 })
 
-router.get('/:postsToReturn', (req, res, next) => {
-    const increasingAmount = 40;
+router.get('/:incmount', (req, res, next) => {
+    const increasingAmount = req.query.incAmount;
     Post.count().then(postCount => {
         const toSkip = postCount - increasingAmount;
-        console.log('mocmdeba')
         if(toSkip <= 0){
             res.status(200).json({
                 posts: []
             })
             return
-        }
-        console.log('faidisadas')
+        };
         Post.aggregate([
             { $skip: toSkip },
             { $limit: 20 },
