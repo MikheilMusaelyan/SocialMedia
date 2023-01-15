@@ -146,7 +146,7 @@ router.get('/singlePost', (req, res) => {
 
 router.get('/allPosts/:incAmount', (req, res, next) => {
     const increasingAmount = +req.params.incAmount;
-    Post.find().toArray().reverse().then(data => {
+    Post.find().then(data => {
         res.status(200).json({
             posts: data
         })
