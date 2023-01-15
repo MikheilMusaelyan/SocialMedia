@@ -144,7 +144,7 @@ router.get('/singlePost', (req, res) => {
     })
 })
 
-router.get('/:incAmount', (req, res, next) => {
+router.get('/allPosts/:incAmount', (req, res, next) => {
     console.log(req.query, req.params, req.body)
     const increasingAmount = +req.query.incAmount;
     Post.count().then(postCount => {
