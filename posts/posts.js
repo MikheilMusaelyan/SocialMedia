@@ -146,9 +146,12 @@ router.get('/singlePost', (req, res) => {
 
 router.get('/:postsToReturn', (req, res, next) => {
     let incAmount = 5
+    Post.count().then(data => {
+        console.log(data)
+    
     Post.aggregate([
-        { $count: "total_docs" },
-        { $skip: { $count: "$total_docs" } - 5 },
+        { $count: "myCount" },
+        { $skip: { $subtract: [ data, 5 ] } },
         { $limit: 2 },
         { $project: { comments: 0 } }
     ])
@@ -163,6 +166,7 @@ router.get('/:postsToReturn', (req, res, next) => {
             err
         })
     });
+    })
 });
 
 
