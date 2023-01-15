@@ -248,12 +248,13 @@ router.put('/addFriend', checkAuth, (req, res) => {
     let haveSent = false;
     let haveRecieved = false;
     let areFriends = false;
+
     if(req.userData.userId === req.body.userId){
         return
     }
+    
     User.findOne({_id: req.userData.userId})
     .then(me => {
-        console.log(me.afterLogin, 'iihh')
         for(let i of me.afterLogin.friends){
             if(i === req.body.userId){
                 removeFriend();
@@ -440,19 +441,16 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
         }
         function send(){
-            console.log(req.body.userId, req.userData.userId)
             User.findOneAndUpdate(
                 {_id: req.body.userId},
                 {$addToSet: {'afterLogin.gotReqs': req.userData.userId}}
             )
             .then(user => {
-                console.log('added in theirs', user)
                 User.findOneAndUpdate(
                     {_id: req.userData.userId}, 
                     {$addToSet: {"afterLogin.sentReqs": req.body.userId}}
                 )
                 .then(user => {
-                    console.log('added in mine')
                     res.status(201).json({
                         message: 'success'
                     })
