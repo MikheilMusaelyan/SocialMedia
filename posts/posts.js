@@ -146,9 +146,9 @@ router.get('/singlePost', (req, res) => {
 
 router.get('/:postsToReturn', (req, res, next) => {
     let incAmount = 5
+    let collectionLength = Post.count();
     Post.aggregate([
-        { $count: "total_docs" },
-        { $skip: { $subtract: [ "$total_docs", 5 ] } },
+        { $skip: { $subtract: [ collectionLength, 5 ] } },
         { $limit: 2 },
         { $project: { comments: 0 } }
     ]).then(posts => {
