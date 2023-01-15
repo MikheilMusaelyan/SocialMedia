@@ -145,7 +145,7 @@ router.get('/singlePost', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
-    const increasingAmount = req.query.incAmount;
+    const increasingAmount = 40;
     Post.count().then(postCount => {
         const toSkip = postCount - increasingAmount;
         Post.aggregate([
