@@ -148,8 +148,8 @@ router.get('/:postsToReturn', (req, res, next) => {
     let incAmount = 5
     Post.aggregate([
         { $count: "total_docs" },
-        { $skip: { $subtract: [ "$total_docs", incAmount ] } },
-        { $limit: 20 },
+        { $skip: { $subtract: [ "$total_docs", 5 ] } },
+        { $limit: 2 },
         { $project: { comments: 0 } }
     ]).then(posts => {
         res.status(200).json({
@@ -157,6 +157,7 @@ router.get('/:postsToReturn', (req, res, next) => {
         })
     })
     .catch(err => {
+        console.log(err)
         res.status(501).json({
             err
         })
