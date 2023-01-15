@@ -151,7 +151,7 @@ router.get('/:postsToReturn', (req, res, next) => {
         let toSkip = postCount - incAmount
     Post.aggregate([
         { $count: "myCount" },
-        { $skip: { $subtract: [ toSkip, 5 ] } },
+        { $skip: toSkip},
         { $limit: 2 },
         { $project: { comments: 0 } }
     ])
