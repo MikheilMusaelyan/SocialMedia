@@ -446,7 +446,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 {$addToSet: {'afterLogin.gotReqs': req.userData.userId}}
             )
             .then(user => {
-                console.log('added in theirs')
+                console.log('added in theirs', user)
                 User.findOneAndUpdate(
                     {_id: req.userData.userId}, 
                     {$addToSet: {"afterLogin.sentReqs": req.body.userId}}
