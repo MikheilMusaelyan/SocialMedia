@@ -151,7 +151,7 @@ router.get('/:postsToReturn', (req, res, next) => {
     
     Post.aggregate([
         { $count: "myCount" },
-        { $skip: { $subtract: [ data, 5 ] } },
+        { $skip: { $subtract: [ +data, 5 ] } },
         { $limit: 2 },
         { $project: { comments: 0 } }
     ])
