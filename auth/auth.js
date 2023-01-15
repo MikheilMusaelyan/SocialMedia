@@ -155,7 +155,8 @@ router.post('/login', (req, res, cb) => {
 // })
 
 
-router.get('/singleUser/:userId', (req, res, cb) => {
+router.get('/singleUser', (req, res, cb) => {
+    console.log(req.body, req.params)
     User.aggregate([
         {
             $match: {
