@@ -440,30 +440,35 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
         }
         function send(){
+            console.log(req.body.userId, req.userData.userId)
             User.findOneAndUpdate(
                 {_id: req.body.userId},
                 {$addToSet: {'afterLogin.gotReqs': req.userData.userId}}
             )
             .then(user => {
-            })
-            .catch(err => {
-                    res.status(501).json({
-                        message: 'User not found'
-                    });
-            })
-
-            User.findOneAndUpdate(
-                {_id: req.userData.userId}, 
-                {$addToSet: {"afterLogin.sentReqs": req.body.userId}}
-            )
-            .then(user => {
-                res.status(201).json({
-                    message: 'success'
+                console.log('added in theirs')
+                User.findOneAndUpdate(
+                    {_id: req.userData.userId}, 
+                    {$addToSet: {"afterLogin.sentReqs": req.body.userId}}
+                )
+                .then(user => {
+                    console.log('added in mine')
+                    res.status(201).json({
+                        message: 'success'
+                    })
                 })
-            })
-            .catch(err => {
+                .catch(err => {
+                    console.log(err)
                     res.status(501).json({
                         message: 'User not found1'
+                    });
+                })
+
+            })
+            .catch(err => {
+                console.log(err, 'error occ')
+                    res.status(501).json({
+                        message: 'User not found'
                     });
             })
         }
