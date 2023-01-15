@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('./singlepost-mongoose');
-const Posts = require('./post-mongoose');
 const User = require('../auth/auth-mongoose')
 const checkAuth = require('../auth/auth-validator');
 const Comment = require('../comments/comments-mongoose');
@@ -38,19 +37,6 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             creatorNickname: usersData.nickname,
             commentsLength: 0
         });
-
-        Posts.updateOne({
-            $push: {
-                'posts': {
-                    addedPost
-                }
-            }
-        }).then(data => {
-            console.log(data, 'success')
-        })
-        .catch(err => {
-            console.log(err, 'failed post')
-        })
         
         addedPost.save().then(data => {
             res.status(201).json({
@@ -159,12 +145,12 @@ router.get('/singlePost', (req, res) => {
 })
 
 router.get('/:postsToReturn', (req, res, next) => {
+    let incAmount = 5
     Post.aggregate([
-    {
-        $project: {
-            comments: 0
-        }
-    }
+        { $count: "total_docs" },
+        { $skip: { $subtract: [ "$total_docs", incAmount ] } },
+        { $limit: 20 },
+        { $project: { comments: 0 } }
     ]).then(posts => {
         res.status(200).json({
             posts: posts
@@ -236,8 +222,6 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
         })
     })
 });
-
-
 
 router.post('/reply', checkAuth, upload.single('image'),
 (req, res, next) => {
