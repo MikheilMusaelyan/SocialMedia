@@ -563,6 +563,7 @@ router.put('/profilePic', checkAuth, upload.single('profilePic'), (req, res) => 
             }
         )
         .then(data => {
+            console.log(data, 12312321)
             res.status(201).json({
                 me
             })
