@@ -156,7 +156,13 @@ router.post('/login', (req, res, cb) => {
 
 
 router.get('/singleUser', (req, res, cb) => {
-    console.log(req.body, req.params, req.query)
+    console.log(
+        typeof(req.query.bool), 
+        req.query.bool === true, 
+        req.query.bool === false,
+        req.query.bool === 'true', 
+        req.query.bool === 'false', 
+    )
     User.aggregate([
         {
             $match: {
