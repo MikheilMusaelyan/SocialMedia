@@ -156,11 +156,11 @@ router.post('/login', (req, res, cb) => {
 
 
 router.get('/singleUser', (req, res, cb) => {
-    console.log(req.body, req.params)
+    console.log(req.body, req.params, req.query)
     User.aggregate([
         {
             $match: {
-                _id: new ObjectId(req.params.userId)
+                _id: new ObjectId(req.query.id)
             }
         },
         {
@@ -177,7 +177,7 @@ router.get('/singleUser', (req, res, cb) => {
         Post.aggregate([
         {
             $match: {
-                'creatorId': req.params.userId
+                'creatorId': req.query.id
             }
         },
         {
