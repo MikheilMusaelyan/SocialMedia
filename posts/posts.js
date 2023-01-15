@@ -145,8 +145,7 @@ router.get('/singlePost', (req, res) => {
 })
 
 router.get('/allPosts/:incAmount', (req, res, next) => {
-    console.log(req.query, req.params, req.body)
-    const increasingAmount = +req.query.incAmount;
+    const increasingAmount = +req.params.incAmount;
     Post.count().then(postCount => {
         const toSkip = postCount - increasingAmount;
         if(toSkip <= 0){
