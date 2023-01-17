@@ -148,8 +148,10 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
             toSkip = 0;
         };
 
+        console.log(toSkip)
+
         Post.aggregate([
-            { $skip: toSkip },
+            { $skip: 0 },
             { $limit: 20 },
             { $project: { comments: 0 } }
         ])
