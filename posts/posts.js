@@ -88,11 +88,6 @@ router.delete('/delete/:id', checkAuth, (req, res, next) => {
         res.status(200).json({
             response
         })
-        .catch(err => {
-            res.status(404).json({
-                err
-            })
-        })
     })
     .catch(err => {
         res.status(404).json({
@@ -146,43 +141,32 @@ router.get('/singlePost', (req, res) => {
 
 router.get('/allPosts/:incAmount', (req, res, next) => {
     const increasingAmount = +req.params.incAmount;
-    Post.find().then(data => {
-        res.status(200).json({
-            posts: data
+    Post.count().then(postCount => {
+        const toSkip = postCount - increasingAmount;        
+        if(toSkip <= 0){
+            res.status(200).json({
+                posts: []
+            });
+            return;
+        };
+        Post.aggregate([
+            { $skip: toSkip },
+            { $limit: 20 },
+            { $project: { comments: 0 } }
+        ])
+        .then(POSTS => {
+            const posts = POSTS.reverse();
+            res.status(200).json({
+                posts: posts
+            });
         })
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({
-            err
-        })
-    })
-    // Post.count().then(postCount => {
-    //     const toSkip = postCount - increasingAmount;        
-    //     if(toSkip <= 0){
-    //         res.status(200).json({
-    //             posts: []
-    //         });
-    //         return;
-    //     };
-    //     Post.aggregate([
-    //         { $skip: toSkip },
-    //         { $limit: 20 },
-    //         { $project: { comments: 0 } }
-    //     ])
-    //     .then(POSTS => {
-    //         const posts = POSTS.reverse();
-    //         res.status(200).json({
-    //             posts: posts
-    //         });
-    //     })
-    //     .catch(err => {
-    //         console.log(err)
-    //         res.status(501).json({
-    //             err
-    //         })
-    //     });
-    // });
+        .catch(err => {
+            console.log(err)
+            res.status(501).json({
+                err
+            })
+        });
+    });
 });
 
 
