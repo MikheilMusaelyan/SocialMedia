@@ -209,7 +209,7 @@ router.get('/usersPosts', (req, res) => {
         .then(POSTS => {
             const posts = POSTS.reverse()
             res.status(200).json({
-                POSTS: posts
+                posts: posts
             })
         }) 
         .catch(err => {
