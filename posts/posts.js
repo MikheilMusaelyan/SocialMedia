@@ -144,10 +144,12 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
     Post.count().then(postCount => {
         let fetchAmount = 20;
         let toSkip = postCount - increasingAmount;   
+        console.log('toskip', toSkip)
         if(toSkip < 0){
             if(toSkip + fetchAmount > 0){
                 toSkip = 0;
                 fetchAmount = toSkip + fetchAmount;
+                console.log('toskip-', toSkip, 'fetchAmount', fetchAmount )
             } else if(toSkip + fetchAmount <= 0){
                 res.status(200).json({
                     posts: []
@@ -155,7 +157,7 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
                 return
             }
         }
-        console.log(toSkip, increasingAmount)
+        console.log(toSkip, increasingAmount, fetchAmount)
 
         Post.aggregate([
             { $skip: toSkip },
