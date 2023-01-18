@@ -185,7 +185,7 @@ router.get('/singleUser', (req, res, cb) => {
 
 router.get('/usersPosts', (req, res) => {
     Post.count({creatorId: req.query.id}).then(COUNT => {
-        const increasingAmount = +req.query.amount;
+        const increasingAmount = +req.query.incAmount;
         let fetchAmount = 20;
         let toSkip = COUNT - increasingAmount;   
         if(toSkip < 0){
