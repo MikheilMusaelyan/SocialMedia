@@ -190,8 +190,8 @@ router.get('/usersPosts', (req, res) => {
         let toSkip = COUNT - increasingAmount;   
         if(toSkip < 0){
             if(toSkip + fetchAmount > 0){
-                toSkip = 0;
                 fetchAmount = toSkip + fetchAmount;
+                toSkip = 0;
             } else if(toSkip + fetchAmount <= 0){
                 res.status(200).json({
                     posts: []

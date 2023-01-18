@@ -147,8 +147,8 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
         console.log('toskip', toSkip)
         if(toSkip < 0){
             if(toSkip + fetchAmount > 0){
-                toSkip = 0;
                 fetchAmount = toSkip + fetchAmount;
+                toSkip = 0;
                 console.log('toskip-', toSkip, 'fetchAmount', fetchAmount )
             } else if(toSkip + fetchAmount <= 0){
                 res.status(200).json({
