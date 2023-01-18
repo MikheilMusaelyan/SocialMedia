@@ -184,28 +184,31 @@ router.get('/singleUser', (req, res, cb) => {
 })
 
 router.get('/usersPosts', (req, res) => {
-    Post.aggregate([
-    {
-        $match: {
-            'creatorId': req.query.id
+    Post.count({creatorId: req.query.id}).then(count => {
+        console.log(count)
+        Post.aggregate([
+        {
+            $match: {
+                'creatorId': req.query.id
+            }
+        },
+        {
+            $project: {
+                comments: 0
+            }
         }
-    },
-    {
-        $project: {
-            comments: 0
-        }
-    }
-    ])
-    .then(posts => {
-        res.status(200).json({
-            posts
+        ])
+        .then(posts => {
+            res.status(200).json({
+                posts
+            })
+        }) 
+        .catch(err => {
+            console.log(err)
+            res.status(501).json({
+                message: 'Couldn\'t fetch posts'
+            });
         })
-    }) 
-    .catch(err => {
-        console.log(err)
-        res.status(501).json({
-            message: 'Couldn\'t fetch posts'
-        });
     })
 })
 
