@@ -142,14 +142,27 @@ router.get('/singlePost', (req, res) => {
 router.get('/allPosts/:incAmount', (req, res, next) => {
     const increasingAmount = +req.params.incAmount;
     Post.count().then(postCount => {
+        let fetchAmount = 20;
+        console.log(fetchAmount, 'this is fetchAmount')
         let toSkip = postCount - increasingAmount;   
-        if(toSkip <= 0){
-            toSkip = 0;
-        };
+        if(toSkip < 0){
+            if(toSkip + fetchAmount > 0){
+                toSkip = 0;
+                fetchAmount = toSkip + fetchAmount;
+                console.log(toSkip + 'is less than 0 and will give you' + fetchAmount + 'posts')
+            } else if(toSkip + fetchAmount <= 0){
+                console.log('no posts for you')
+                res.status(200).json({
+                    posts: []
+                })
+                return
+            }
+        }
+        console.log(toSkip, increasingAmount)
 
         Post.aggregate([
             { $skip: toSkip },
-            { $limit: 20 },
+            { $limit: fetchAmount },
             { $project: { comments: 0 } }
         ])
         .then(POSTS => {
