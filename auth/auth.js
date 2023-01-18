@@ -184,23 +184,32 @@ router.get('/singleUser', (req, res, cb) => {
 })
 
 router.get('/usersPosts', (req, res) => {
-    Post.count({creatorId: req.query.id}).then(count => {
-        console.log(count)
-        Post.aggregate([
-        {
-            $match: {
-                'creatorId': req.query.id
-            }
-        },
-        {
-            $project: {
-                comments: 0
+    Post.count({creatorId: req.query.id}).then(COUNT => {
+        const increasingAmount = +req.query.amount;
+        let fetchAmount = 20;
+        let toSkip = COUNT - increasingAmount;   
+        if(toSkip < 0){
+            if(toSkip + fetchAmount > 0){
+                toSkip = 0;
+                fetchAmount = toSkip + fetchAmount;
+            } else if(toSkip + fetchAmount <= 0){
+                res.status(200).json({
+                    posts: []
+                })
+                return
             }
         }
+
+        Post.aggregate([
+        { $match: {'creatorId': req.query.id} },
+        { $skip: toSkip },
+        { $limit: fetchAmount },
+        { $project: { comments: 0 }}
         ])
-        .then(posts => {
+        .then(POSTS => {
+            const posts = POSTS.reverse()
             res.status(200).json({
-                posts
+                POSTS: posts
             })
         }) 
         .catch(err => {
