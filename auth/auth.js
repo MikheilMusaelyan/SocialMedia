@@ -139,7 +139,6 @@ router.post('/login', (req, res, cb) => {
     })
 });
 
-// renew socketID automatically
 // router.put('/renewSocketId', checkAuth, (req, res) => {
 //     User.findOneAndUpdate(
 //         {_id: req.userData.userId},
@@ -172,37 +171,40 @@ router.get('/singleUser', (req, res, cb) => {
     ])
     .then(user => {
         let returnUser = user[0];
-
-        if(req.query.bool === 'true'){
-            Post.aggregate([
-            {
-                $match: {
-                    'creatorId': req.query.id
-                }
-            },
-            {
-                $project: {
-                    comments: 0
-                }
-            }
-            ])
-            .then(posts => {
-                res.status(200).json({
-                    returnUser,
-                    posts
-                })
-            })
-            return
-        } else if(req.query.bool === 'false'){
-            res.status(200).json({
-                returnUser
-            })
-        }
+        res.status(200).json({
+            returnUser
+        })
     })
     .catch(err => {
         console.log(err)
         res.status(501).json({
             message: 'User not found'
+        });
+    })
+})
+
+router.get('/usersPosts', (req, res) => {
+    Post.aggregate([
+    {
+        $match: {
+            'creatorId': req.query.id
+        }
+    },
+    {
+        $project: {
+            comments: 0
+        }
+    }
+    ])
+    .then(posts => {
+        res.status(200).json({
+            posts
+        })
+    }) 
+    .catch(err => {
+        console.log(err)
+        res.status(501).json({
+            message: 'Couldn\'t fetch posts'
         });
     })
 })
@@ -604,28 +606,29 @@ router.put('/coverPic', checkAuth, upload.single('coverPic'), (req, res) => {
     })
 })
 
-router.put('/disconnect', checkAuth, (req, res) => {
-    User.findOneAndUpdate(
-        {_id: new ObjectId(req.userData.userId)},
-        {
-            $set: {
-                'afterLogin.connected': false
-            }
-        },
-        {
-            new: true
-        }
-    )
-    .then(data => {
-        res.status(201).json({
-            message: 'disconnected'
-        })
-    })
-    .catch(err => {
-        res.status(400).json({
-            err
-        })
-    })
-})
+// router.put('/disconnect', checkAuth, (req, res) => {
+//     User.findOneAndUpdate(
+//         {_id: new ObjectId(req.userData.userId)},
+//         {
+//             $set: {
+//                 'afterLogin.connected': false
+//             }
+//         },
+//         {
+//             new: true
+//         }
+//     )
+//     .then(data => {
+//         console.log('disconnected')
+//         res.status(201).json({
+//             message: 'disconnected'
+//         })
+//     })
+//     .catch(err => {
+//         res.status(400).json({
+//             err
+//         })
+//     })
+// })
 
 module.exports = router;
