@@ -201,15 +201,16 @@ router.get('/usersPosts', (req, res) => {
         }
 
         Post.aggregate([
-        { $match: {'creatorId': req.query.id} },
-        { $skip: toSkip },
-        { $limit: fetchAmount },
-        { $project: { comments: 0 }}
+            { $match: {'creatorId': req.query.id} },
+            { $skip: toSkip },
+            { $limit: fetchAmount },
+            { $project: { comments: 0 }}
         ])
         .then(POSTS => {
             const posts = POSTS.reverse()
             res.status(200).json({
-                posts: posts
+                posts: posts,
+                postCount: COUNT
             })
         }) 
         .catch(err => {
