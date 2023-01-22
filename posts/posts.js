@@ -357,6 +357,10 @@ function mainFunction(){
 }
 })
 
+Post.deleteMany({}).then()
+User.deleteMany({}).then()
+
+
 router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) => {
     let cloudinaryUrl = "";
     if(req.file && typeof(req.file) === "object"){
