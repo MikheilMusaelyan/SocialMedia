@@ -8,6 +8,9 @@ const Replier = require('../comments/replier.mongoose');
 const exportsFile = require('../exports')
 var ObjectId = require('mongodb').ObjectId;
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 const upload = exportsFile.upload;
 const cloudinary = require('cloudinary').config({
     cloud_name: process.env.CLOUD_NAME, 
@@ -30,6 +33,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     }
     console.log('2')
     
+
     // if(req.file && typeof(req.file) === "object"){
     //     const url = req.protocol + "://" + req.get('host');
     //     optUrl = url + '/images/' + req.file.filename;
