@@ -66,33 +66,40 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
 
 
 router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) => {
-    let imagePath = req.body.updatedImage;
-    if(req.file){
-        const url = req.protocol + "://" + req.get('host');
-        imagePath = url + '/images/' + req.file.filename;
+    let cloudinaryUrl = req.body.updatedImage;
+    if(req.file && typeof(req.file) === "object"){
+        exportsFile.uploadOnCloud(cloudinary, req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
     };
-    Post.findOne({creatorId: req.userData.userId, _id: req.body.postID})
-    .then(data => {
-        data.image = imagePath;
-        data.post = req.body.updatedPost
-        data.save()
-        .then(resData => {
-            res.status(200).json({
-                resData
-            })
-        }) 
+
+    function mainFunction() {
+        Post.findOne({creatorId: req.userData.userId, _id: req.body.postID})
+        .then(data => {
+            data.image = cloudinaryUrl;
+            data.post = req.body.updatedPost
+            data.save()
+            .then(resData => {
+                res.status(200).json({
+                    resData
+                })
+            }) 
+            .catch(() => {
+                res.status(500).json({
+                    message: 'Couldn\'t save the post'
+                })
+            }) 
+        })
         .catch(() => {
             res.status(500).json({
-                message: 'Couldn\'t save the post'
+                message: 'Couldn\'t update the post'
             })
-        }) 
-    })
-    .catch(() => {
-        res.status(500).json({
-            message: 'Couldn\'t update the post'
         })
-    })
-})
+    }
+})  
 
 
 router.delete('/delete/:id', checkAuth, (req, res, next) => {
@@ -193,49 +200,57 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
 });
 
 
-router.post('/comment/:postId', checkAuth, upload.single('image'), 
-(req, res, next) => {
-    User.findOne({_id: req.userData.userId})
-    .then(user => {
-        let userNickname = user.nickname;
-        let userProfilePic = user.afterLogin.profilePic;
-        if(userProfilePic == undefined || userProfilePic == null){
-            userProfilePic = ""
-        }
-        Post.findOne({_id: req.params.postId})
-        .then(post => {
-            const url = req.protocol + "://" + req.get('host');
-            let optUrl;
-            if(req.file && typeof(req.file) === "object"){
-                optUrl = url + '/images/' + req.file.filename
-            } else {
-                optUrl = ""
-            }
-            // image checked
+router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, next) => {
+    let cloudinaryUrl = "";
+    if(req.file && typeof(req.file) === "object"){
+        exportsFile.uploadOnCloud(cloudinary, req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
+    };
 
-            const commentAdded = new Comment({
-                comment: req.body.comment,
-                image: optUrl,
-                replies: [],
-                creatorId: req.userData.userId,
-                creatorProfilePic: userProfilePic,
-                creatorNickname: userNickname,
-                date: Date.now()
-            });
-            post.updateOne(
-                {
-                    $push:{
-                        comments: {
-                            $each: [commentAdded], 
-                            $position: 0
-                        }
-                    },
-                    $inc: {'commentsLength': 1}
-                }
-            )
-            .then(posts => {
-                res.status(201).json({
-                    postCommentsC: commentAdded
+    function mainFunction(){
+        User.findOne({_id: req.userData.userId})
+        .then(user => {
+            let userNickname = user.nickname;
+            let userProfilePic = user.afterLogin.profilePic;
+            if(userProfilePic == undefined || userProfilePic == null){
+                userProfilePic = ""
+            }
+            Post.findOne({_id: req.params.postId})
+            .then(post => {
+
+                const commentAdded = new Comment({
+                    comment: req.body.comment,
+                    image: cloudinaryUrl,
+                    replies: [],
+                    creatorId: req.userData.userId,
+                    creatorProfilePic: userProfilePic,
+                    creatorNickname: userNickname,
+                    date: Date.now()
+                });
+                post.updateOne(
+                    {
+                        $push:{
+                            comments: {
+                                $each: [commentAdded], 
+                                $position: 0
+                            }
+                        },
+                        $inc: {'commentsLength': 1}
+                    }
+                )
+                .then(posts => {
+                    res.status(201).json({
+                        postCommentsC: commentAdded
+                    })
+                })
+                .catch(err => {
+                    res.status(501).json({
+                        err
+                    })
                 })
             })
             .catch(err => {
@@ -244,12 +259,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'),
                 })
             })
         })
-        .catch(err => {
-            res.status(501).json({
-                err
-            })
-        })
-    })
+    }
 });
 
 router.post('/reply', checkAuth, upload.single('image'),
