@@ -23,6 +23,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let optUrl;
     let cloudinaryUrl;
     if(req.file && typeof(req.file) === "object"){
+        console.log('dasn')
         cloudinary.uploader.upload(req.file.path, {folder: "my-folder", resource_type: "image"})
         .then((data) => {
             console.log(data, 1)
