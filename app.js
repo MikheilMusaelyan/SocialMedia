@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 
 const userRoutes = require('./auth/auth');
 const postRoutes = require('./posts/posts');
-const activeUsersRoutes = require('./auth/activeUsers');
 const messages = require('./messages/messages');
 const cors = require('cors');
 
@@ -42,7 +41,6 @@ app.use((req, res, next) => {
 
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
-app.use('/activeUsers', activeUsersRoutes);
 app.use('/messages', messages)
 app.get('/', (req, res) => {
     res.send('Hello World!!!');

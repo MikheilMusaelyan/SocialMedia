@@ -30,7 +30,6 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         mainFunction()
     }
 
-    
     function mainFunction(){
         let usersId = req.userData.userId;
 
