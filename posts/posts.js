@@ -9,7 +9,7 @@ const exportsFile = require('../exports')
 var ObjectId = require('mongodb').ObjectId;
 
 const upload = exportsFile.upload;
-const cloudinary = require('cloudinary').v2.config({
+const cloudinary = require('cloudinary').config({
     cloud_name: process.env.CLOUD_NAME, 
     api_key: process.env.API_KEY,
     api_secret: process.env.API_SECRET
