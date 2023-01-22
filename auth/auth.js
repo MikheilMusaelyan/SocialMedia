@@ -556,31 +556,70 @@ router.get('/getMyFriends', checkAuth, (req, res) => {
 // })
 
 router.put('/profilePic', checkAuth, upload.single('profilePic'), (req, res) => {
-    let profilePicture = '';
-    if(req.file){
-        const url = req.protocol + "://" + req.get('host');
-        profilePicture = url + '/images/' + req.file.filename;
-    }
-    User.findOneAndUpdate(
-        {_id: req.userData.userId},
-        {
-            $set: {
-                'afterLogin.profilePic': profilePicture,
-            }
-        }
-    )
-    .then(me => {
-        console.log(req.userData.userId, profilePicture)
-        Post.updateMany(
-            {'creatorId': req.userData.userId},
+    let cloudinaryUrl = "";
+    if(req.file && typeof(req.file) === "object"){
+        exportsFile.uploadOnCloud(req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
+    };
+
+    function mainFunction() {
+        User.findOneAndUpdate(
+            {_id: req.userData.userId},
             {
                 $set: {
-                    'creatorProfilePic': profilePicture 
+                    'afterLogin.profilePic': cloudinaryUrl,
                 }
             }
         )
-        .then(data => {
-            console.log(data, 12312321)
+        .then(me => {
+            Post.updateMany(
+                {'creatorId': req.userData.userId},
+                {
+                    $set: {
+                        'creatorProfilePic': cloudinaryUrl 
+                    }
+                }
+            )
+            .then(data => {
+                res.status(201).json({
+                    me
+                })
+            })
+            .catch(error => {
+                res.status(500).json({
+                    error
+                })
+            })
+        })
+        .catch(error => {
+            res.status(500).json({
+                error
+            })
+        })
+    }
+})
+
+router.put('/coverPic', checkAuth, upload.single('coverPic'), (req, res) => {
+    let cloudinaryUrl = "";
+    if(req.file && typeof(req.file) === "object"){
+        exportsFile.uploadOnCloud(req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
+    };
+    
+    function mainFunction(){
+        User.findOneAndUpdate(
+            {_id: req.userData.userId},
+            {$set: {'afterLogin.coverPic': cloudinaryUrl}}
+        )
+        .then(me => {
             res.status(201).json({
                 me
             })
@@ -590,34 +629,7 @@ router.put('/profilePic', checkAuth, upload.single('profilePic'), (req, res) => 
                 error
             })
         })
-    })
-    .catch(error => {
-        res.status(500).json({
-            error
-        })
-    })
-})
-
-router.put('/coverPic', checkAuth, upload.single('coverPic'), (req, res) => {
-    let coverPicture = '';
-    if(req.file){
-        const url = req.protocol + "://" + req.get('host');
-        coverPicture = url + '/images/' + req.file.filename;
     }
-    User.findOneAndUpdate(
-        {_id: req.userData.userId},
-        {$set: {'afterLogin.coverPic': coverPicture}}
-    )
-    .then(me => {
-        res.status(201).json({
-            me
-        })
-    })
-    .catch(error => {
-        res.status(500).json({
-            error
-        })
-    })
 })
 
 // router.put('/disconnect', checkAuth, (req, res) => {

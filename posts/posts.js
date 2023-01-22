@@ -12,17 +12,12 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const upload = exportsFile.upload;
-const cloudinary = require('cloudinary').v2;
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET
-});
+
 
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let cloudinaryUrl = ""
     if(req.file && typeof(req.file) === "object"){
-        exportsFile.uploadOnCloud(cloudinary, req.file).then(data => {
+        exportsFile.uploadOnCloud(req.file).then(data => {
             cloudinaryUrl = data.secure_url;
             mainFunction()
         })
@@ -68,7 +63,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
 router.put("/edit", checkAuth, upload.single('updatedImage'), (req, res, next) => {
     let cloudinaryUrl = req.body.updatedImage;
     if(req.file && typeof(req.file) === "object"){
-        exportsFile.uploadOnCloud(cloudinary, req.file).then(data => {
+        exportsFile.uploadOnCloud(req.file).then(data => {
             cloudinaryUrl = data.secure_url;
             mainFunction()
         })
@@ -203,7 +198,7 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
 router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, next) => {
     let cloudinaryUrl = "";
     if(req.file && typeof(req.file) === "object"){
-        exportsFile.uploadOnCloud(cloudinary, req.file).then(data => {
+        exportsFile.uploadOnCloud(req.file).then(data => {
             cloudinaryUrl = data.secure_url;
             mainFunction()
         })
@@ -221,7 +216,6 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
             }
             Post.findOne({_id: req.params.postId})
             .then(post => {
-
                 const commentAdded = new Comment({
                     comment: req.body.comment,
                     image: cloudinaryUrl,
@@ -264,63 +258,75 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
 
 router.post('/reply', checkAuth, upload.single('image'),
 (req, res, next) => {
-    User.findOne(
-        {
-            _id: req.userData.userId,
-        },
-    ).then(user => {
-        const url = req.protocol + "://" + req.get('host');
-        let optUrl;
-        if(req.file && typeof(req.file) === "object"){
-            optUrl = url + '/images/' + req.file.filename
-        } else {
-            optUrl = ""
-        }
-        // userfind
-        let userNickname = user.nickname;
-        let userProfilePic = user.afterLogin.profilePic;
-        if(userProfilePic == undefined || userProfilePic == null){
-            userProfilePic = ""
-        } if(req.body.image == undefined || req.body.image == null){
-            req.body.image = ""
-        }
-        let replier = new Replier({
-            comment: req.body.comment,
-            image: optUrl,
-            creatorId: req.userData.userId,
-            postId: req.query.postId,
-            creatorPic: userProfilePic,
-            creatorNickname: userNickname,
-            date: Date.now()
-        });
+    let cloudinaryUrl = "";
+    if(req.file && typeof(req.file) === "object"){
+        exportsFile.uploadOnCloud(req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
+    };
 
-        Post.findOneAndUpdate(
-            { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
-            { 
-                $push: {"comments.$.replies": replier},
-                $inc: {'commentsLength': 1}
+    function mainFunction(){
+        User.findOne(
+            {
+                _id: req.userData.userId,
             },
-            { returnOriginal: false },
         )
-        .then(() => {
-            res.status(201).json({
-                postCommentsC: replier
+        .then(user => {
+            // userfind
+            let userNickname = user.nickname;
+            let userProfilePic = user.afterLogin.profilePic;
+            if(userProfilePic == undefined || userProfilePic == null){
+                userProfilePic = ""
+            } if(req.body.image == undefined || req.body.image == null){
+                req.body.image = ""
+            }
+            let replier = new Replier({
+                comment: req.body.comment,
+                image: cloudinaryUrl,
+                creatorId: req.userData.userId,
+                postId: req.query.postId,
+                creatorPic: userProfilePic,
+                creatorNickname: userNickname,
+                date: Date.now()
+            });
+
+            Post.findOneAndUpdate(
+                { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
+                { 
+                    $push: {"comments.$.replies": replier},
+                    $inc: {'commentsLength': 1}
+                },
+                { returnOriginal: false },
+            )
+            .then(() => {
+                res.status(201).json({
+                    postCommentsC: replier
+                })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    err
+                })
             })
         })
-        .catch(err => {
-            res.status(500).json({
-                err
-            })
-        })
-    })
+    }
 });
 
 router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) => {
-    let imagePath = req.body.updatedImage;
-    if(req.file){
-        const url = req.protocol + "://" + req.get('host');
-        imagePath = url + '/images/' + req.file.filename;
-    } 
+    let cloudinaryUrl = "";
+    if(req.file && typeof(req.file) === "object"){
+        exportsFile.uploadOnCloud(req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
+    };
+    
+function mainFunction(){
     Post.findOneAndUpdate(
         {
             _id: new ObjectId(req.body.postID)
@@ -328,7 +334,7 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
         {
             $set: {
                 'comments.$[cId].replies.$[rId].comment': req.body.updatedPost,
-                'comments.$[cId].replies.$[rId].image': imagePath,
+                'comments.$[cId].replies.$[rId].image': cloudinaryUrl,
             }
         },
         {
@@ -348,14 +354,20 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
             err
         })
     })
+}
 })
 
 router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) => {
-    let imagePath = req.body.updatedImage;
-    if(req.file){
-        const url = req.protocol + "://" + req.get('host');
-        imagePath = url + '/images/' + req.file.filename;
-    } 
+    let cloudinaryUrl = "";
+    if(req.file && typeof(req.file) === "object"){
+        exportsFile.uploadOnCloud(req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
+    };
+function mainFunction(){
     Post.findOneAndUpdate(
         {
             _id: new ObjectId(req.body.postID),
@@ -364,7 +376,7 @@ router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) 
         {
             $set: {
                 'comments.$[cId].comment': req.body.updatedPost,
-                'comments.$[cId].image': imagePath,
+                'comments.$[cId].image': cloudinaryUrl,
             }
         },
         {
@@ -383,6 +395,7 @@ router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) 
             err
         })
     })
+}
 })
 
 router.put('/delete-comment', checkAuth, (req, res) => {

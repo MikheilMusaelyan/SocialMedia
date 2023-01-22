@@ -24,10 +24,17 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage: storage});
 
-function uploadOnCloud(CLOUDINARY, file) {
-    return CLOUDINARY.uploader.upload(file.path, {folder: "my-folder", resource_type: "image"})
-}
 
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
+
+function uploadOnCloud(file) {
+    return cloudinary.uploader.upload(file.path, {folder: "my-folder", resource_type: "image"})
+}
 
 module.exports = {
     upload,
