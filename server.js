@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const normalizePort = val => {
     var port = parseInt(val, 10);
     if (isNaN(port)) {
@@ -38,7 +40,7 @@ const onListening = () => {
 
 // const express = require('express');
 // const router = express.Router();
-require('dotenv').config();
+
 
 const app = require("./app");
 const debug = require("debug")("node-angular"); //node-angular any name
