@@ -9,7 +9,11 @@ const exportsFile = require('../exports')
 var ObjectId = require('mongodb').ObjectId;
 
 const upload = exportsFile.upload;
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('cloudinary').v2.config({
+    cloud_name: process.env.CLOUD_NAME, 
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
 
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let optUrl;
@@ -17,7 +21,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     if(req.file && typeof(req.file) === "object"){
         cloudinary.uploader.upload(req.file.path, {folder: "my-folder", resource_type: "image"})
         .then((data) => {
-            console.log('1 ')
+            console.log(data, 1)
             cloudinaryUrl = data;
         })
         .catch(err => {
