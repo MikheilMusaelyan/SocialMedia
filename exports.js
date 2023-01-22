@@ -1,7 +1,6 @@
 const express = require('express');
 const multer = require('multer');
 
-
 const mimeTypes = {
     'image/png': 'png',
     'image/jpeg': 'jpeg',

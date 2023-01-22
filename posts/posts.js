@@ -9,15 +9,29 @@ const exportsFile = require('../exports')
 var ObjectId = require('mongodb').ObjectId;
 
 const upload = exportsFile.upload;
+const cloudinary = require('cloudinary').v2;
 
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let optUrl;
+    let cloudinaryUrl;
     if(req.file && typeof(req.file) === "object"){
-        const url = req.protocol + "://" + req.get('host');
-        optUrl = url + '/images/' + req.file.filename;
-    } else {
-        optUrl = ""
+        cloudinary.uploader.upload(req.file.path, {folder: "my-folder", resource_type: "image"})
+        .then((data) => {
+            console.log('1 ')
+            cloudinaryUrl = data;
+        })
+        .catch(err => {
+            console.log(err)
+        })
     }
+    console.log('2')
+    
+    // if(req.file && typeof(req.file) === "object"){
+    //     const url = req.protocol + "://" + req.get('host');
+    //     optUrl = url + '/images/' + req.file.filename;
+    // } else {
+    //     optUrl = ""
+    // }
 
     let usersId = req.userData.userId;
 
@@ -28,7 +42,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         }
         let addedPost = new Post({
             post: req.body.post,
-            image: optUrl,
+            image: cloudinaryUrl.secure_url,
             comments: JSON.parse(req.body.comments),
             likes: +req.body.likes,
             creatorId: usersId,
