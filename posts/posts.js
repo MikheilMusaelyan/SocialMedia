@@ -20,7 +20,6 @@ cloudinary.config({
 });
 
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
-    console.log(process.env.CLOUD_NAME, process.env.API_KEY, process.env.API_SECRET, process.env.DB_PASSWORD)
     let optUrl;
     let cloudinaryUrl;
     if(req.file && typeof(req.file) === "object"){
@@ -28,22 +27,9 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
         .then((data) => {
             console.log(data, 1)
             cloudinaryUrl = data;
-        })
-        .catch(err => {
-            console.log(err)
-        })
-    }
-    console.log('2')
-    
 
-    // if(req.file && typeof(req.file) === "object"){
-    //     const url = req.protocol + "://" + req.get('host');
-    //     optUrl = url + '/images/' + req.file.filename;
-    // } else {
-    //     optUrl = ""
-    // }
 
-    let usersId = req.userData.userId;
+            let usersId = req.userData.userId;
 
     User.findOne({_id: usersId})
     .then(usersData => {
@@ -73,6 +59,22 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             })
         })
     })
+
+
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }    
+
+    // if(req.file && typeof(req.file) === "object"){
+    //     const url = req.protocol + "://" + req.get('host');
+    //     optUrl = url + '/images/' + req.file.filename;
+    // } else {
+    //     optUrl = ""
+    // }
+
+    
 });
 
 
