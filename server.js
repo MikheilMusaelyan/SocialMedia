@@ -56,17 +56,24 @@ const io = require('socket.io')(server, {
 });
 
 io.on('connection', (socket) => {
-    socket.emit('mySocketId', socket.id)
 
-    socket.on('sendSocketToFriends', (data) => {
-        socket.request.user = { _id: data.userId };
-        if(data.friendsSockets.length > 0){
-            io.to(data.friendsSockets).emit('friendsSocketId', 
-            {
-                userId: data.userId, 
-                socketId: data.mySocketId
-            })
-        }
+    // socket.request.user = { _id: data.userId };
+
+    // socket.emit('mySocketId', socket.id)
+
+
+    // socket.on('sendSocketToFriends', (data) => {
+    //     if(data.friendsSockets.length > 0){
+    //         io.to(data.friendsSockets).emit('friendsSocketId', 
+    //         {
+    //             userId: data.userId, 
+    //             socketId: data.mySocketId
+    //         })
+    //     }
+    // })
+
+    socket.on('join-room', (roomId) => {
+        socket.join(roomId.ID)
     })
 
     socket.on('disconnect', () => {
@@ -95,9 +102,6 @@ io.on('connection', (socket) => {
         io.to(socketId).emit('recieveMessage', myId);
     })
 })
-
-
-
 
 
 //
