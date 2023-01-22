@@ -24,7 +24,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let cloudinaryUrl;
     console.log('ehe')
     if(req.file && typeof(req.file) === "object"){
-        console.log('dasn', process.env.API_KEY, process.env.DB_PASSWORD)
+        console.log('dasn', process.env.API_KEY, process.env.DB_PASSWORD, process.env.CLOUD_NAME)
         cloudinary.uploader.upload(req.file.path, {folder: "my-folder", resource_type: "image"})
         .then((data) => {
             console.log(data, 1)
