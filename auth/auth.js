@@ -87,6 +87,7 @@ router.post('/login', (req, res, cb) => {
         )
         .then()
         .catch(err => {
+            console.log(foundUser, 'dsadsarr')
             res.status(500).json({
                 message: 'User not found'
             });
