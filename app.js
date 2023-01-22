@@ -14,11 +14,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/images', express.static('images'))
 
 const mongoose = require('mongoose');
-
-const {DB_USERNAME, DB_PASSWORD} = process.env
-
+console.log(process.env.API_KEY, process.env.DB_PASSWORD)
 mongoose.set('strictQuery', false);
-mongoose.connect(`mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@mikescluster.aootk6w.mongodb.net/?retryWrites=true&w=majority`,
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mikescluster.aootk6w.mongodb.net/?retryWrites=true&w=majority`,
 {
     useNewUrlParser: true, 
     useUnifiedTopology: true
