@@ -14,7 +14,7 @@ dotenv.config();
 const upload = exportsFile.upload;
 
 
-router.post('', checkAuth, upload.single('image'), (req, res, next) => {
+router.post('', checkAuth, (req, res, next) => {
     let cloudinaryUrl = ""
     if(req.file && typeof(req.file) === "object"){
         exportsFile.uploadOnCloud(req.file).then(data => {
