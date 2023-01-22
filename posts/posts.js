@@ -20,62 +20,48 @@ cloudinary.config({
 });
 
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
-    let optUrl;
-    let cloudinaryUrl;
+    let cloudinaryUrl = ""
     if(req.file && typeof(req.file) === "object"){
-        console.log('dasn', process.env.API_KEY, process.env.DB_PASSWORD, process.env.CLOUD_NAME)
-        cloudinary.uploader.upload(req.file.path, {folder: "my-folder", resource_type: "image"})
-        .then((data) => {
-            console.log(data, 1)
-            cloudinaryUrl = data;
+        exportsFile.uploadOnCloud(cloudinary, req.file).then(data => {
+            cloudinaryUrl = data.secure_url;
+            mainFunction()
+        })
+    } else {
+        mainFunction()
+    }
 
-            console.log('hi',process.env.API_KEY, cloudinaryUrl, process.env.DB_PASSWORD, process.env.API_SECRET)
+    function mainFunction(){
         let usersId = req.userData.userId;
 
-    User.findOne({_id: usersId})
-    .then(usersData => {
-        if(usersData.afterLogin.profilePic.length <= 1){
-            usersData.afterLogin.profilePic = ""
-        }
-        let addedPost = new Post({
-            post: req.body.post,
-            image: cloudinaryUrl.secure_url,
-            comments: JSON.parse(req.body.comments),
-            likes: +req.body.likes,
-            creatorId: usersId,
-            date: Date.now(),
-            creatorProfilePic: usersData.afterLogin.profilePic,
-            creatorNickname: usersData.nickname,
-            commentsLength: 0
-        });
-        
-        addedPost.save().then(data => {
-            res.status(201).json({
-                data: data
+        User.findOne({_id: usersId})
+        .then(usersData => {
+            if(usersData.afterLogin.profilePic.length <= 1){
+                usersData.afterLogin.profilePic = ""
+            }
+            let addedPost = new Post({
+                post: req.body.post,
+                image: cloudinaryUrl,
+                comments: JSON.parse(req.body.comments),
+                likes: +req.body.likes,
+                creatorId: usersId,
+                date: Date.now(),
+                creatorProfilePic: usersData.afterLogin.profilePic,
+                creatorNickname: usersData.nickname,
+                commentsLength: 0
+            });
+
+            addedPost.save().then(data => {
+                res.status(201).json({
+                    data: data
+                })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    err
+                })
             })
         })
-        .catch(err => {
-            res.status(500).json({
-                err
-            })
-        })
-    })
-
-
-        })
-        .catch(err => {
-            console.log(err)
-        })
-    }    
-
-    // if(req.file && typeof(req.file) === "object"){
-    //     const url = req.protocol + "://" + req.get('host');
-    //     optUrl = url + '/images/' + req.file.filename;
-    // } else {
-    //     optUrl = ""
-    // }
-
-    
+    }
 });
 
 

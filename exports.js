@@ -24,7 +24,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage: storage});
 
+function uploadOnCloud(CLOUDINARY, file) {
+    return CLOUDINARY.uploader.upload(file.path, {folder: "my-folder", resource_type: "image"})
+}
+
 
 module.exports = {
     upload,
+    uploadOnCloud
 }
