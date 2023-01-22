@@ -28,8 +28,8 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             console.log(data, 1)
             cloudinaryUrl = data;
 
-
-            let usersId = req.userData.userId;
+            console.log(process.env.API_KEY, cloudinaryUrl, process.env.DB_PASSWORD, process.env.API_SECRET)
+        let usersId = req.userData.userId;
 
     User.findOne({_id: usersId})
     .then(usersData => {
