@@ -22,14 +22,15 @@ cloudinary.config({
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let optUrl;
     let cloudinaryUrl;
+    console.log('ehe')
     if(req.file && typeof(req.file) === "object"){
-        console.log('dasn')
+        console.log('dasn', process.env.API_KEY, process.env.DB_PASSWORD)
         cloudinary.uploader.upload(req.file.path, {folder: "my-folder", resource_type: "image"})
         .then((data) => {
             console.log(data, 1)
             cloudinaryUrl = data;
 
-            console.log(process.env.API_KEY, cloudinaryUrl, process.env.DB_PASSWORD, process.env.API_SECRET)
+            console.log('hi',process.env.API_KEY, cloudinaryUrl, process.env.DB_PASSWORD, process.env.API_SECRET)
         let usersId = req.userData.userId;
 
     User.findOne({_id: usersId})
