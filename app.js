@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 
 app.use(function (req, res, next) {
     res.cookie('name', 'value', {
-        sameSite: 'Lax',
+        sameSite: 'None',
         secure: true,
         httpOnly: true
     });
