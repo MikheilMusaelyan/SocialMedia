@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
+
 mongoose.set('strictQuery', false);
 mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mikescluster.aootk6w.mongodb.net/?retryWrites=true&w=majority`,
 {
