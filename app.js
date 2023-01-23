@@ -46,7 +46,6 @@ app.use(function (req, res, next) {
     res.cookie('name', 'value', {
         sameSite: 'None',
         secure: true,
-        httpOnly: true
     });
     next();
 });
