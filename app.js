@@ -50,6 +50,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
 app.use('/messages', messages)
