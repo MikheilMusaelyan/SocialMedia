@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 
 const bodyParser = require('body-parser');
+const cookiePrser = require('cookie-parser')
 
 const userRoutes = require('./auth/auth');
 const postRoutes = require('./posts/posts');
@@ -10,8 +11,10 @@ const cors = require('cors');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 mongoose.set('strictQuery', false);
 mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@mikescluster.aootk6w.mongodb.net/?retryWrites=true&w=majority`,
 {
@@ -39,15 +42,14 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(function(req, res, next) {
-    res.cookie('myCookie', 'myValue', {
-    sameSite: 'None',
-    secure: true,
-    httpOnly: true
+app.use(function (req, res, next) {
+    res.cookie('name', 'value', {
+        sameSite: 'none',
+        secure: true,
+        httpOnly: true
     });
     next();
 });
-
 
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
