@@ -39,6 +39,16 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(function(req, res, next) {
+    res.cookie('myCookie', 'myValue', {
+    sameSite: 'None',
+    secure: true,
+    httpOnly: true
+    });
+    next();
+});
+
+
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
 app.use('/messages', messages)
