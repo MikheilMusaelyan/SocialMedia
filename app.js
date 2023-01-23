@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 const bodyParser = require('body-parser');
-const cookiePrser = require('cookie-parser')
+const cookieParser = require('cookie-parser')
 
 const userRoutes = require('./auth/auth');
 const postRoutes = require('./posts/posts');
@@ -12,6 +12,7 @@ const cors = require('cors');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 
 const mongoose = require('mongoose');
 
