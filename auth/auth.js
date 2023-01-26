@@ -90,6 +90,7 @@ router.post('/login', (req, res, cb) => {
             res.status(200).json({
                 token: token,
                 userId: foundUser._id,
+                profilePic: foundUser.afterLogin.profilePic
             })
         })
         .catch(err => {
