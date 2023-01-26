@@ -107,6 +107,7 @@ io.on('connection', (socket) => {
     socket.on('addFriend', (info) => {
         if(info.bool === false){
             io.to(info.id).emit('gotReq', {status: 'rejected'})
+            return
         }
         io.to(info.id).emit('gotReq', {status: ''})
     })
