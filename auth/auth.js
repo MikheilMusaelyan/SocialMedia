@@ -58,11 +58,7 @@ router.post('/login', (req, res, cb) => {
     
     User.findOne({nickname: req.body.nickname})
     .then(user => {
-        console.log(user)
         if(user == false || user == undefined || user == null){
-            // res.status(400).json({
-            //     message: 'User not found'
-            // });
             return
         };
         foundUser = user;
@@ -79,43 +75,13 @@ router.post('/login', (req, res, cb) => {
         foundUser.updateOne(
             {
                 $set: {
-                    'socketId': req.body.socketId,
                     'afterLogin.connected': true
                 }
             },
             {new: true}
         )
-        .then()
-        .catch(err => {
-            console.log(foundUser, 'dsadsarr')
-            res.status(500).json({
-                message: 'User not found'
-            });
-            console.log(err)
-        });
-
-        
-        let updatedUsers = [];
-        let friendsQuery = foundUser.afterLogin.friends.slice();
-        User.aggregate([
-            {
-                $match: {
-                    '_id': {
-                        $in: friendsQuery.map(id => new ObjectId(id))
-                    }
-                }
-            },
-            {
-                $group: { 
-                    _id: "$_id", 
-                    socketId: {'$first': '$socketId'}
-                }
-            }
-        ])
-        .then(users => {
-            for (let user of users) {
-                updatedUsers.push(user.socketId);
-            };
+        .then(() => {
+            console.log(foundUser)
             const token = jwt.sign(
                 {email: foundUser.email, userId: foundUser._id},
                 process.env.JWT_SECRET_KEY,
@@ -124,14 +90,14 @@ router.post('/login', (req, res, cb) => {
             res.status(200).json({
                 token: token,
                 userId: foundUser._id,
-                friendsSockets: updatedUsers
             })
         })
         .catch(err => {
-            res.status(400).json({
-                err
-            })
-        })
+            res.status(500).json({
+                message: 'User not found'
+            });
+            console.log(err)
+        });
     })
     .catch(err => {
         res.status(500).json({
