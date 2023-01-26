@@ -103,6 +103,10 @@ io.on('connection', (socket) => {
     socket.on('sendMessage', (socketId, myId) => {
         io.to(socketId).emit('recieveMessage', myId);
     })
+
+    socket.on('addFriend', id => {
+        io.to(id).emit('gotReq', 123)
+    })
 })
 
 

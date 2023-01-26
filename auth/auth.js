@@ -259,8 +259,6 @@ router.get('/mySelf', checkAuth, (req, res) => {
 // User.updateMany({$set: {'afterLogin.gotReqs': []}}).then(data=>console.log(data))
 
 router.put('/addFriend', checkAuth, (req, res) => {
-    console.log(req.body, 'ad d a friend')
-
     let haveSent = false;
     let haveRecieved = false;
     let areFriends = false;
