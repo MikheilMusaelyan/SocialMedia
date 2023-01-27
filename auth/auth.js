@@ -382,7 +382,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 }
             )
             .then(me => {
-                usersArr.push(me._id)
+                usersArr.push(String(me._id));
                 // second started
                 User.findOneAndUpdate(
                     {_id: req.body.userId},
@@ -392,7 +392,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     }
                 )
                 .then(otherUser => {
-                    usersArr.push(otherUser._id);
+                    usersArr.push(String(otherUser._id));
                     new Messages({
                         users: usersArr,
                         messages: [],
