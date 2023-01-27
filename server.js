@@ -73,6 +73,9 @@ io.on('connection', (socket) => {
     //         })
     //     }
     // })
+    socket.on('logout', (ID) => {
+        socket.leave(ID)
+    })
 
     socket.on('join-room', (roomId) => {
         socket.join(roomId.ID)
