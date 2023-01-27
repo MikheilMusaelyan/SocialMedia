@@ -339,20 +339,20 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
         }
         function removeFriend(){
-            let myEmail;
+            let myId;
             User.findOneAndUpdate(
                 {_id: req.userData.userId},
                 {$pull: {'afterLogin.friends': req.body.userId}}
             )
             .then(user => {
-                myEmail = user.email;
+                myId = user._id;
                 User.findOneAndUpdate(
                     {_id: req.body.userId},
                     {$pull: {'afterLogin.friends': req.userData.userId}}
                 )
                 .then(user => {
                     Messages.findOneAndDelete(
-                        {'users': {$all: [myEmail, user.email]}}
+                        {'users': {$all: [myId, user._id]}}
                     )
                     .then(data => {
                         res.status(201).json({
@@ -382,7 +382,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 }
             )
             .then(me => {
-                usersArr.push(me.email)
+                usersArr.push(me._id)
                 // second started
                 User.findOneAndUpdate(
                     {_id: req.body.userId},
@@ -392,7 +392,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     }
                 )
                 .then(otherUser => {
-                    usersArr.push(otherUser.email);
+                    usersArr.push(otherUser._id);
                     new Messages({
                         users: usersArr,
                         messages: [],
@@ -470,7 +470,6 @@ router.get('/getMyFriends', checkAuth, (req, res) => {
                     _id: "$_id", 
                     nickname:  {"$first": "$nickname"},
                     profilePic: {'$first': '$afterLogin.profilePic'},
-                    email: {'$first': '$email'},
                     socketId: {'$first': '$socketId'},
                     connected: {'$first': '$afterLogin.connected'}
                 }

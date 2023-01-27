@@ -25,8 +25,8 @@ router.post('', checkAuth, upload.single('images'), (req, res) => {
             sender: req.userData.userId 
         })
         Messages.findOneAndUpdate(
-            { users: { $all: [req.userData.email, req.body.email] } },
-            {$push: 
+            { users: { $all: [req.userData.userId, req.body.ID] } },
+            { $push: 
                 {
                     messages: {
                         $each: [MSG],
@@ -52,11 +52,11 @@ router.post('', checkAuth, upload.single('images'), (req, res) => {
 })
 
 router.get('', checkAuth, (req, res) => {
-    const theirEmail = req.query.recieverEmail;
-    const myEmail = req.userData.email;
+    const theirId = req.query.recieverId; 
+    const myId = req.userData.userId;
     const msgAmount = req.query.amount;
-    Messages.aggregate([
-        { $match: { users: { $all: [myEmail, theirEmail] } } },
+    Messages.aggregate([ 
+        { $match: { users: { $all: [myId, theirId] } } },
         {
             $project: {
                 users: 1,
