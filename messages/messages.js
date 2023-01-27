@@ -55,6 +55,7 @@ router.get('', checkAuth, (req, res) => {
     const theirId = req.query.recieverId; 
     const myId = req.userData.userId;
     const msgAmount = req.query.amount;
+    console.log(myId, theirId)
     Messages.aggregate([ 
         { $match: { users: { $all: [myId, theirId] } } },
         {
@@ -65,6 +66,7 @@ router.get('', checkAuth, (req, res) => {
         }
     ])
     .then(msgs => {
+        console.log(msgs)
         const msgArr = msgs[0].messages.reverse();
         res.status(200).json({
             msgArr
