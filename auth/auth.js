@@ -18,8 +18,9 @@ router.get('/searchUsers', (req, res) => {
     if (!req.query.searchItem) {
         return res.status(200).send(
             []
-        );
+        ); 
     }
+    req.query.searchItem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regexQuery = new RegExp("^" + req.query.searchItem, "i");;
     User.aggregate([
         {
