@@ -16,9 +16,9 @@ var ObjectId = require('mongodb').ObjectId;
 
 router.get('/searchUsers', (req, res) => {
     if (!req.query.searchItem) {
-        return res.status(200).send(
-            []
-        ); 
+        return res.status(200).json({
+            data: []
+        });
     }
     req.query.searchItem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regexQuery = new RegExp("^" + req.query.searchItem, "i");;
@@ -34,6 +34,9 @@ router.get('/searchUsers', (req, res) => {
                     profilePic: "$afterLogin.profilePic",
                 }
             }
+        },
+        {
+            $limit: 40
         }
     ])
     .then(data => {
@@ -43,8 +46,8 @@ router.get('/searchUsers', (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(500).json({
-            message: 'Couldn\'t find user'
+        res.status(200).json({
+            data: []
         })
     })
 })
