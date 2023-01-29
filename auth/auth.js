@@ -15,11 +15,20 @@ var ObjectId = require('mongodb').ObjectId;
 
 
 router.get('/searchUsers', (req, res) => {
-
-    User.find(
-        { nickname: { $regex: 
-            new RegExp(`${req.query.searchItem.split(" ").join("\\s*")}`, "i") } }
-    ).then(data => {
+    const regexQuery = new RegExp(`${req.query.searchItem.split(" ").join("\\s*")}`, "i");
+    User.aggregate([
+        {
+            $match: { nickname: { $regex: regexQuery } }
+        },
+        {
+            $group: {
+                _id: {
+                    nickname: "$nickname",
+                    afterLogin: "$afterLogin",
+                }
+            }
+        }
+    ]).then(data => {
         console.log(data)
         res.status(200).json({
             data
