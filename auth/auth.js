@@ -22,10 +22,9 @@ router.get('/searchUsers', (req, res) => {
         },
         {
             $group: {
-                _id: {
-                    nickname: "$nickname",
-                    afterLogin: "$afterLogin",
-                }
+                _id: "$_id",
+                nickname: "$nickname",
+                profilePic: "$afterLogin.profilePic",
             }
         }
     ]).then(data => {
