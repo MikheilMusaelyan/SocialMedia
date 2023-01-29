@@ -29,10 +29,16 @@ router.get('/searchUsers', (req, res) => {
                 }
             }
         }
-    ]).then(data => {
-        console.log(data.info)
+    ])
+    .then(data => {
         res.status(200).json({
-            data
+            data: data._id
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            message: 'Couldn\'t find user'
         })
     })
 })
