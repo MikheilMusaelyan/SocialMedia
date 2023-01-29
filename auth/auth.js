@@ -15,6 +15,11 @@ var ObjectId = require('mongodb').ObjectId;
 
 
 router.get('/searchUsers', (req, res) => {
+    if (!req.query.searchItem) {
+        return res.status(200).send(
+            []
+        );
+    }
     const regexQuery = new RegExp(`${req.query.searchItem.split(" ").join("\\s*")}`, "i");
     User.aggregate([
         {
@@ -32,7 +37,7 @@ router.get('/searchUsers', (req, res) => {
     ])
     .then(data => {
         res.status(200).json({
-            data: data._id
+            data: data
         })
     })
     .catch(err => {
