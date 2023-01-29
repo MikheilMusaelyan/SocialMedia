@@ -13,6 +13,18 @@ const upload = exportsFile.upload;
 
 var ObjectId = require('mongodb').ObjectId;
 
+
+router.get('searchUsers/', (req, res) => {
+    User.find(
+        { nickname: { $regex: new RegExp(`.*${req.query.searchItem.split(" ").join(".*")}.*`, "i") } }
+    ).then(data => {
+        console.log(data)
+        res.status(200).json({
+            data
+        })
+    })
+})
+
 router.post('', (req, res, cb) => {
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
