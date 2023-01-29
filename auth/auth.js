@@ -23,7 +23,7 @@ router.get('/searchUsers', (req, res) => {
         {
             $group: {
                 _id: {
-                    
+                    _id: "$_id",
                     nickname: "$nickname",
                     profilePic: "$afterLogin.profilePic",
                 }
