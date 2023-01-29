@@ -22,13 +22,15 @@ router.get('/searchUsers', (req, res) => {
         },
         {
             $group: {
-                _id: "$_id",
-                nickname: "$nickname",
-                profilePic: "$afterLogin.profilePic",
+                info: {
+                    _id: "$_id",
+                    nickname: "$nickname",
+                    profilePic: "$afterLogin.profilePic",
+                }
             }
         }
     ]).then(data => {
-        console.log(data)
+        console.log(data.info)
         res.status(200).json({
             data
         })
