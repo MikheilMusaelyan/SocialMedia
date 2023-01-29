@@ -14,7 +14,7 @@ const upload = exportsFile.upload;
 var ObjectId = require('mongodb').ObjectId;
 
 
-router.get('searchUsers/', (req, res) => {
+router.get('/searchUsers', (req, res) => {
     User.find(
         { nickname: { $regex: new RegExp(`.*${req.query.searchItem.split(" ").join(".*")}.*`, "i") } }
     ).then(data => {
