@@ -20,7 +20,7 @@ router.get('/searchUsers', (req, res) => {
             []
         );
     }
-    const regexQuery = new RegExp(`${req.query.searchItem.split(" ").join("\\s*")}`, "i");
+    const regexQuery = new RegExp(`.*${req.query.searchItem.split(" ").join(".*")}.*`, "i");
     User.aggregate([
         {
             $match: { nickname: { $regex: regexQuery } }
