@@ -316,7 +316,7 @@ router.post('/reply', checkAuth, upload.single('image'),
 });
 
 router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) => {
-    let cloudinaryUrl = "";
+    let cloudinaryUrl = req.body.updatedImage;
     if(req.file && typeof(req.file) === "object"){
         exportsFile.uploadOnCloud(req.file).then(data => {
             cloudinaryUrl = data.secure_url;
@@ -329,7 +329,8 @@ router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) =>
 function mainFunction(){
     Post.findOneAndUpdate(
         {
-            _id: new ObjectId(req.body.postID)
+            _id: new ObjectId(req.body.postID),
+            '$comments.$[cId].replies.$[rId].creatorId': req.userData.userId
         },
         {
             $set: {
@@ -359,7 +360,7 @@ function mainFunction(){
 
 
 router.put('/commentEdit', checkAuth, upload.single('updatedImage'), (req, res) => {
-    let cloudinaryUrl = "";
+    let cloudinaryUrl = req.body.updatedImage;
     if(req.file && typeof(req.file) === "object"){
         exportsFile.uploadOnCloud(req.file).then(data => {
             cloudinaryUrl = data.secure_url;
@@ -372,7 +373,7 @@ function mainFunction(){
     Post.findOneAndUpdate(
         {
             _id: new ObjectId(req.body.postID),
-            // '$comments.$[cId].creatorId': req.userData.userId
+            '$comments.$[cId].creatorId': req.userData.userId
         },
         {
             $set: {
