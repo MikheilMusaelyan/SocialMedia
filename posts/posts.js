@@ -330,7 +330,7 @@ function mainFunction(){
     Post.findOneAndUpdate(
         {
             _id: new ObjectId(req.body.postID),
-            '$comments.$[cId].replies.$[rId].creatorId': req.userData.userId
+            'comments.$[cId].replies.$[rId].creatorId': req.userData.userId
         },
         {
             $set: {
@@ -373,7 +373,7 @@ function mainFunction(){
     Post.findOneAndUpdate(
         {
             _id: new ObjectId(req.body.postID),
-            '$comments.$[cId].creatorId': req.userData.userId
+            'comments.$[cId].creatorId': req.userData.userId
         },
         {
             $set: {
