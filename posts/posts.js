@@ -406,7 +406,7 @@ router.put('/delete-comment', checkAuth, (req, res) => {
         },
         {
             $pull: {"comments": {"_id": new ObjectId(req.body.commentId)}},
-            $inc: {'commentsLength': -1}
+            $inc: {'commentsLength': {$subtract: [{$size: "$comments.replies"}, 1]}}
         },
     )
     .then(post => {
