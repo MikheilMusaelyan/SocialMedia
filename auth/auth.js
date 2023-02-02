@@ -399,7 +399,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     )
                     .then(data => {
                         res.status(201).json({
-                            message: 'Send a friend request',
+                            message: 'removed',
                             userData: {
                                 nickname: USER.nickname,
                                 connected: USER.afterLogin.connected,
