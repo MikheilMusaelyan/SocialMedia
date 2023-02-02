@@ -286,6 +286,7 @@ router.post('/reply', checkAuth, upload.single('image'),
             let replier = new Replier({
                 comment: req.body.comment,
                 image: cloudinaryUrl,
+                replies: [],
                 creatorId: req.userData.userId,
                 postId: req.query.postId,
                 creatorPic: userProfilePic,
@@ -314,6 +315,41 @@ router.post('/reply', checkAuth, upload.single('image'),
         })
     }
 });
+
+router.put('/anotherReply', (req, res) => {
+    let replier = {
+        comment: 'req.body.comment',
+        replies: []
+    };
+
+    Post.findOneAndUpdate(
+        {_id: new ObjectId(req.body.id)},
+        {
+            $push: {
+                'comments[cId].replies.[rId]': {
+                    replier
+                }
+            }
+        },
+        {
+            arrayFilters: [
+                {'cId._id': new ObjectId(req.body.commentId)},
+                {'rId._id': new ObjectId(req.body.replyId)},
+                // {'rId2._id': new ObjectId(req.body.replyId2)}
+            ]
+        }
+    )
+    .then(data => {
+        res.status(200).json({
+            data
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            err
+        })
+    })
+})
 
 router.put('/replyEdit', checkAuth, upload.single('updatedImage'), (req, res) => {
     let cloudinaryUrl = req.body.updatedImage;
