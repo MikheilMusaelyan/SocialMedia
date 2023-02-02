@@ -393,13 +393,18 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     {_id: req.body.userId},
                     {$pull: {'afterLogin.friends': req.userData.userId}}
                 )
-                .then(user => {
+                .then(USER => {
                     Messages.findOneAndDelete(
-                        {'users': {$all: [myId, user._id]}}
+                        {'users': {$all: [myId, USER._id]}}
                     )
                     .then(data => {
                         res.status(201).json({
-                            message: 'Send a friend request'
+                            message: 'Send a friend request',
+                            userData: {
+                                nickname: USER.nickname,
+                                connected: USER.afterLogin.connected,
+                                profilePic: USER.afterLogin.profilePic
+                            }
                         })
                     })
                 })
@@ -442,7 +447,12 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     })
                     .save().then(data => {
                         res.status(201).json({
-                            message: 'Friends'
+                            message: 'Friends',
+                            userData: {
+                                nickname: USER.nickname,
+                                connected: USER.afterLogin.connected,
+                                profilePic: USER.afterLogin.profilePic
+                            }
                         })
                     })
                     .catch(err => {
