@@ -7,6 +7,7 @@ const replierSchema = mongoose.Schema({
     postId: {type:String, required: true},
     creatorPic: {type:String, required: true},
     creatorNickname: {type:String, required: true},
+    // lvl: {type: Number, immutable: true},
     date: {type:Date, default: Date.now(), required: true, immutable: true}
 });
 module.exports = mongoose.model('Replier', replierSchema);
