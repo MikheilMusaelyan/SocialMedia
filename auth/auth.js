@@ -332,7 +332,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
-                        message: 'You rejected theirs'
+                        message: 'Send a friend request'
                     })
                 })
                 .catch(err => {
@@ -365,7 +365,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
-                        message: 'You canceled yours'
+                        message: 'Send a friend request'
                     })
                 })
                 .catch(err => {
@@ -399,7 +399,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     )
                     .then(data => {
                         res.status(201).json({
-                            message: 'You removed them'
+                            message: 'Send a friend request'
                         })
                     })
                 })
@@ -442,7 +442,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     })
                     .save().then(data => {
                         res.status(201).json({
-                            message: 'You confirmed theirs'
+                            message: 'Friends'
                         })
                     })
                     .catch(err => {
@@ -476,7 +476,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
-                        message: 'You sent them'
+                        message: 'You sent a friend request'
                     })
                 })
                 .catch(err => {
