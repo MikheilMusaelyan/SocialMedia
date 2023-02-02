@@ -325,6 +325,22 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 {$pull: {'afterLogin.gotReqs': req.body.userId}}
             )
             .then(user => {
+
+                User.findOneAndUpdate(
+                    {_id: req.body.userId},
+                    {$pull: {'afterLogin.sentReqs': req.userData.userId}}
+                )
+                .then(user => {
+                    res.status(201).json({
+                        message: 'You rejected theirs'
+                    })
+                })
+                .catch(err => {
+                    res.status(501).json({
+                        message: 'User not found1'
+                    });
+                })
+
             })
             .catch(err => {
                 res.status(501).json({
@@ -333,20 +349,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
 
             // otheruer
-            User.findOneAndUpdate(
-                {_id: req.body.userId},
-                {$pull: {'afterLogin.sentReqs': req.userData.userId}}
-            )
-            .then(user => {
-                res.status(201).json({
-                    message: 'success'
-                })
-            })
-            .catch(err => {
-                res.status(501).json({
-                    message: 'User not found1'
-                });
-            })
+            
         }
         function cancelYourRequest(){
             User.findOneAndUpdate(
@@ -354,22 +357,23 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 {$pull: {'afterLogin.sentReqs': req.body.userId}}
             )
             .then(user => {
-            })
-            .catch(err => {
-                res.status(501).json({
-                    message: 'User not found1'
-                });
-            })
-
-            // otheruer
-            User.findOneAndUpdate(
-                {_id: req.body.userId},
-                {$pull: {'afterLogin.gotReqs': req.userData.userId}}
-            )
-            .then(user => {
-                res.status(201).json({
-                    message: 'success'
+                
+                // otheruer
+                User.findOneAndUpdate(
+                    {_id: req.body.userId},
+                    {$pull: {'afterLogin.gotReqs': req.userData.userId}}
+                )
+                .then(user => {
+                    res.status(201).json({
+                        message: 'You canceled yours'
+                    })
                 })
+                .catch(err => {
+                    res.status(501).json({
+                        message: 'User not found1'
+                    });
+                })
+            
             })
             .catch(err => {
                 res.status(501).json({
@@ -395,7 +399,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     )
                     .then(data => {
                         res.status(201).json({
-                            message: 'success'
+                            message: 'You removed them'
                         })
                     })
                 })
@@ -438,7 +442,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     })
                     .save().then(data => {
                         res.status(201).json({
-                            message: 'success'
+                            message: 'You confirmed theirs'
                         })
                     })
                     .catch(err => {
@@ -472,7 +476,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
-                        message: 'success'
+                        message: 'You sent them'
                     })
                 })
                 .catch(err => {

@@ -5,7 +5,7 @@ const User = require('../auth/auth-mongoose')
 const checkAuth = require('../auth/auth-validator');
 const Comment = require('../comments/comments-mongoose');
 const Replier = require('../comments/replier.mongoose');
-const exportsFile = require('../exports')
+const exportsFile = require('../exports');
 var ObjectId = require('mongodb').ObjectId;
 
 const dotenv = require('dotenv');
