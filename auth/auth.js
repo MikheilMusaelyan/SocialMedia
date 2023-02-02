@@ -449,9 +449,9 @@ router.put('/addFriend', checkAuth, (req, res) => {
                         res.status(201).json({
                             message: 'Friends',
                             userData: {
-                                nickname: USER.nickname,
-                                connected: USER.afterLogin.connected,
-                                profilePic: USER.afterLogin.profilePic
+                                nickname: otherUser.nickname,
+                                connected: otherUser.afterLogin.connected,
+                                profilePic: otherUser.afterLogin.profilePic
                             }
                         })
                     })
