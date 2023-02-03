@@ -117,6 +117,7 @@ io.on('connection', (socket) => {
             { 
                 message: info.theirMessage, 
                 senderId: info.senderId,
+                changed: info.changed
             }
         )
     })
