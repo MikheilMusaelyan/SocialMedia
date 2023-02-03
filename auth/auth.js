@@ -332,6 +332,7 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
+                        
                         message: 'Send a friend request',
                         theirMessage: 'Send a friend request'
                     })
