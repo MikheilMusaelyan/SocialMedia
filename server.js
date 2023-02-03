@@ -116,7 +116,7 @@ io.on('connection', (socket) => {
         io.to(info.id).emit('gotReq', 
             { 
                 message: info.theirMessage, 
-                senderId: info.senderId
+                senderId: info.senderId,
             }
         )
     })
