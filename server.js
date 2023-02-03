@@ -112,7 +112,7 @@ io.on('connection', (socket) => {
             io.to(info.id).emit('gotReq', {status: 'rejected'})
             return
         }
-        io.to(info.id).emit('gotReq', {status: ''})
+        io.to(info.id).emit('gotReq', {message: info.theirMessage})
     })
 })
 
