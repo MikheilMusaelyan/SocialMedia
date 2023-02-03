@@ -332,7 +332,8 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
-                        message: 'Send a friend request'
+                        message: 'Send a friend request',
+                        theirMessage: 'Send a friend request'
                     })
                 })
                 .catch(err => {
@@ -365,7 +366,8 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
-                        message: 'Send a friend request'
+                        message: 'Send a friend request',
+                        theirMessage: 'Send a friend request'
                     })
                 })
                 .catch(err => {
@@ -399,12 +401,9 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     )
                     .then(data => {
                         res.status(201).json({
-                            message: 'removed',
-                            userData: {
-                                nickname: USER.nickname,
-                                connected: USER.afterLogin.connected,
-                                profilePic: USER.afterLogin.profilePic
-                            }
+                            change: 'Removed',
+                            message: 'Send a friend request',
+                            theirMessage: 'Send a friend request',
                         })
                     })
                 })
@@ -447,12 +446,9 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     })
                     .save().then(data => {
                         res.status(201).json({
+                            change: 'Added',
                             message: 'Friends',
-                            userData: {
-                                nickname: otherUser.nickname,
-                                connected: otherUser.afterLogin.connected,
-                                profilePic: otherUser.afterLogin.profilePic
-                            }
+                            theirMessage: 'Friends'
                         })
                     })
                     .catch(err => {
@@ -486,7 +482,8 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 )
                 .then(user => {
                     res.status(201).json({
-                        message: 'You sent a friend request'
+                        message: 'You sent a friend request',
+                        theirMessage: 'Confirm'
                     })
                 })
                 .catch(err => {
