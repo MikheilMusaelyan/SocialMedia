@@ -112,8 +112,13 @@ io.on('connection', (socket) => {
             io.to(info.id).emit('gotReq', {status: 'rejected'})
             return
         }
-        
-        io.to(info.id).emit('gotReq', {message: info.theirMessage})
+
+        io.to(info.id).emit('gotReq', 
+            { 
+                message: info.theirMessage, 
+                senderId: info.senderId
+            }
+        )
     })
 })
 
