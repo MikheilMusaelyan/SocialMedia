@@ -120,7 +120,6 @@ router.post('/login', (req, res, cb) => {
             {new: true}
         )
         .then(() => {
-            console.log(foundUser)
             const token = jwt.sign(
                 {email: foundUser.email, userId: foundUser._id},
                 process.env.JWT_SECRET_KEY,
@@ -236,7 +235,6 @@ router.get('/usersPosts', (req, res) => {
 // })
 
 router.get('/mySelf', checkAuth, (req, res) => {
-    console.log('fdsahgi')
     User.aggregate([
         {
             $match: {

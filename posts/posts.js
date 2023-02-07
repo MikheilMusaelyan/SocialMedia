@@ -2,17 +2,22 @@ const express = require('express');
 const router = express.Router();
 const Post = require('./singlepost-mongoose');
 const User = require('../auth/auth-mongoose')
-const checkAuth = require('../auth/auth-validator');
 const Comment = require('../comments/comments-mongoose');
 const Replier = require('../comments/replier.mongoose');
+
+const checkAuth = require('../auth/auth-validator');
 const exportsFile = require('../exports');
 var ObjectId = require('mongodb').ObjectId;
-
+const upload = exportsFile.upload;
 const dotenv = require('dotenv');
 dotenv.config();
 
-const upload = exportsFile.upload;
-
+function catchErr(res, err, msg) {
+    console.log(err) 
+    res.status(501).json({
+        message: msg
+    })
+}
 
 router.post('', checkAuth, upload.single('image'), (req, res, next) => {
     let cloudinaryUrl = ""
@@ -111,19 +116,6 @@ router.delete('/delete/:id', checkAuth, (req, res, next) => {
     })
 })
 
-// router.get('/singlePost/:id', (req, res, next) => {
-//     Post.findOne({_id: req.params.id})
-//     .then(post => {
-//         postCommentsC = post.comments
-//         res.status(200).json({
-//             postCommentsC
-//         })
-//     })
-//     .catch(err => {
-//         err
-//     })
-// })
-
 router.get('/singlePost', (req, res) => {
     const amount = +req.query.amount;
     const increasingAmount = +req.query.increasingAmount
@@ -159,12 +151,12 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
     Post.count().then(postCount => {
         let fetchAmount = 20;
         let toSkip = postCount - increasingAmount;   
-        console.log('toskip', toSkip)
+
         if(toSkip < 0){
             if(toSkip + fetchAmount > 0){
                 fetchAmount = toSkip + fetchAmount;
                 toSkip = 0;
-                console.log('toskip-', toSkip, 'fetchAmount', fetchAmount )
+
             } else if(toSkip + fetchAmount <= 0){
                 res.status(200).json({
                     posts: []
@@ -172,7 +164,7 @@ router.get('/allPosts/:incAmount', (req, res, next) => {
                 return
             }
         }
-        console.log(toSkip, increasingAmount, fetchAmount)
+
 
         Post.aggregate([
             { $skip: toSkip },
@@ -227,7 +219,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                 });
                 post.updateOne(
                     {
-                        $push:{
+                        $push: {
                             comments: {
                                 $each: [commentAdded], 
                                 $position: 0

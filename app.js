@@ -1,17 +1,13 @@
 const express = require('express');
 const app = express();
 
-const bodyParser = require('body-parser');
-// const cookieParser = require('cookie-parser')
-
 const userRoutes = require('./auth/auth');
 const postRoutes = require('./posts/posts');
 const messages = require('./messages/messages');
-const cors = require('cors');
 
+const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(cookieParser());
 
 
 const mongoose = require('mongoose');
@@ -36,14 +32,6 @@ app.use((req, res, next) => {
     );
     next();
 });
-
-// app.use(function (req, res, next) {
-//     res.cookie('name', 'value', {
-//         sameSite: 'None',
-//         secure: true,
-//     });
-//     next();
-// });
 
 
 app.use('/posts', postRoutes);

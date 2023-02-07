@@ -12,4 +12,4 @@ const postSchema = mongoose.Schema({
     commentsLength: {type: Number, required: true, minLength: 0}
 });
 
-module.exports = mongoose.model('Post', postSchema)
+module.exports = mongoose.model('post', postSchema)
