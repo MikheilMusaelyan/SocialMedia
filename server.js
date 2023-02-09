@@ -116,6 +116,10 @@ io.on('connection', (socket) => {
             }
         )
     })
+
+    socket.on('addedToContacts', (userId) => {
+        io.to(userId).emit('renewContacts')
+    })
 })
 
 

@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./auth-validator');
 const exportsFile = require('../exports');
-const Messages = require('../messages/messages.mongoose');
 
 
 const upload = exportsFile.upload;
@@ -64,7 +63,7 @@ router.post('', (req, res, cb) => {
         })
         .save().then((user) => {
             res.status(200).json({
-                user
+                
             })
         })
         .catch(err => {
@@ -382,27 +381,20 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
         }
         function removeFriend(){
-            let myId;
             User.findOneAndUpdate(
                 {_id: req.userData.userId},
                 {$pull: {'afterLogin.friends': req.body.userId}}
             )
             .then(user => {
-                myId = user._id;
                 User.findOneAndUpdate(
                     {_id: req.body.userId},
                     {$pull: {'afterLogin.friends': req.userData.userId}}
                 )
                 .then(USER => {
-                    Messages.findOneAndDelete(
-                        {'users': {$all: [myId, USER._id]}}
-                    )
-                    .then(data => {
-                        res.status(201).json({
-                            change: 'Removed',
-                            message: 'Send a friend request',
-                            theirMessage: 'Send a friend request',
-                        })
+                    res.status(201).json({
+                        change: 'Removed',
+                        message: 'Send a friend request',
+                        theirMessage: 'Send a friend request',
                     })
                 })
                 .catch(err => {
@@ -418,7 +410,6 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
         }
         function confirm(){
-            let usersArr = [];
             User.findOneAndUpdate(
                 {_id: req.userData.userId},
                 {
@@ -427,7 +418,6 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 }
             )
             .then(me => {
-                usersArr.push(String(me._id));
                 // second started
                 User.findOneAndUpdate(
                     {_id: req.body.userId},
@@ -437,22 +427,10 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     }
                 )
                 .then(otherUser => {
-                    usersArr.push(String(otherUser._id));
-                    new Messages({
-                        users: usersArr,
-                        messages: [],
-                    })
-                    .save().then(data => {
-                        res.status(201).json({
-                            change: 'Added',
-                            message: 'Friends',
-                            theirMessage: 'Friends'
-                        })
-                    })
-                    .catch(err => {
-                        res.status(501).json({
-                            message: 'Couldn\'t create conversation'
-                        });
+                    res.status(201).json({
+                        change: 'Added',
+                        message: 'Friends',
+                        theirMessage: 'Friends'
                     })
                 })
                 .catch(err => {
@@ -502,14 +480,20 @@ router.put('/addFriend', checkAuth, (req, res) => {
     })
 });
 
+
 router.get('/getMyFriends', checkAuth, (req, res) => {
     User.findOne({_id: req.userData.userId}).then(me => {
-        let friendsQuery = me.afterLogin.friends.slice();
+        let contactQuery = []
+        if(req.query.type === 'friends') {
+            contactQuery = me.afterLogin.friends.slice();
+        } else if(req.query.type === 'connections') {
+            contactQuery = me.afterLogin.connections.slice();
+        }
         User.aggregate([
             {
                 $match: {
                     '_id': {
-                        $in: friendsQuery.map(id => new ObjectId(id))
+                        $in: contactQuery.map(id => new ObjectId(id))
                     }
                 }
             },
@@ -518,7 +502,6 @@ router.get('/getMyFriends', checkAuth, (req, res) => {
                     _id: "$_id", 
                     nickname:  {"$first": "$nickname"},
                     profilePic: {'$first': '$afterLogin.profilePic'},
-                    socketId: {'$first': '$socketId'},
                     connected: {'$first': '$afterLogin.connected'}
                 }
             }
@@ -529,9 +512,9 @@ router.get('/getMyFriends', checkAuth, (req, res) => {
             })
         })
         .catch(err => {
-        res.status(500).json({
-            err
-        })
+            res.status(500).json({
+                err
+            })
         })
     })
 });

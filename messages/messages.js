@@ -5,6 +5,8 @@ const router = express.Router();
 const checkAuth = require('../auth/auth-validator');
 const exportsFile = require('../exports');
 const upload = exportsFile.upload;
+var ObjectId = require('mongodb').ObjectId;
+const User = require('../auth/auth-mongoose')
 
 router.post('', checkAuth, upload.single('images'), (req, res) => {
     let cloudinaryUrl = "";
@@ -55,7 +57,6 @@ router.get('', checkAuth, (req, res) => {
     const theirId = req.query.recieverId; 
     const myId = req.userData.userId;
     const msgAmount = req.query.amount;
-    console.log(myId, theirId)
     Messages.aggregate([ 
         { $match: { users: { $all: [myId, theirId] } } },
         {
@@ -66,7 +67,6 @@ router.get('', checkAuth, (req, res) => {
         }
     ])
     .then(msgs => {
-        console.log(msgs)
         const msgArr = msgs[0].messages.reverse();
         res.status(200).json({
             msgArr
@@ -80,5 +80,46 @@ router.get('', checkAuth, (req, res) => {
     })
 })
 
+
+router.post('/createConnection', checkAuth, (req, res) => {
+    User.findOne(
+        {_id: new ObjectId(req.userData.userId) },
+    )
+    .then(me => {
+        if(me.afterLogin.connections.includes(req.body.userId) === false){
+            new Messages({
+                users: [req.userData.userId, req.body.userId],
+                messages: [],
+            })
+            .save()
+            .then(data => {
+                mainFunction()
+            })
+            .catch(err => { console.log(err); res.status(500).json({error: err})})
+        } else {
+            mainFunction()
+        }
+
+        function mainFunction(){
+            User.findOneAndUpdate(
+                {_id: new ObjectId(req.body.userId) },
+                { $addToSet: { 'afterLogin.connections': req.userData.userId } }
+            )
+            .then(otherUser => {
+                User.findOneAndUpdate(
+                    {_id: new ObjectId(req.userData.userId) },
+                    { $addToSet: { 'afterLogin.connections': req.body.userId } }
+                )
+                .then(otherUser => {
+                    res.status(200).json({
+                        data: 'Success'
+                    })
+                })
+                .catch(err => { console.log(err); res.status(500).json({error: err})})
+            })
+            .catch(err => { console.log(err); res.status(500).json({error: err})})
+        }
+    })
+})
 
 module.exports = router
