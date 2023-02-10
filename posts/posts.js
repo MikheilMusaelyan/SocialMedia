@@ -52,7 +52,6 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             });
 
             addedPost.save().then(data => {
-                console.log(data, 123)
                 const usersFriends = usersData.afterLogin.friends;
                 const ME = new Notification({
                     text: `${usersData['nickname']} uploaded a post`,
@@ -242,6 +241,12 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     creatorNickname: userNickname,
                     date: Date.now()
                 });
+                const ME = new Notification({
+                    text: `${user['nickname']} commented on your post`,
+                    linker: req.params.postId,
+                    type: 'post',
+                    date: new Date()
+                })
                 post.updateOne(
                     {
                         $push: {
@@ -254,9 +259,15 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     }
                 )
                 .then(posts => {
-                    res.status(201).json({
-                        postCommentsC: commentAdded
+                    User.updateOne(
+                        {_id: new ObjectId(commentAdded.creatorId)},
+                        {$push: {'notifications': ME}}
+                    ).then(() => {
+                        res.status(201).json({
+                            postCommentsC: commentAdded
+                        })
                     })
+                    
                 })
                 .catch(err => {
                     res.status(501).json({
