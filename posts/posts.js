@@ -342,7 +342,7 @@ router.post('/reply', checkAuth, upload.single('image'),
                 res.status(201).json({
                     postCommentsC: replier
                 })
-                console.log(req.body)
+                console.log(req.body.creatorNickname, req.userdata.userId)
                 if(req.body.creatorNickname !== req.userData.userId){
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
