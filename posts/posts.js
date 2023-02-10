@@ -339,12 +339,19 @@ router.post('/reply', checkAuth, upload.single('image'),
                 { returnOriginal: false },
             )
             .then(() => {
-                // User.findOne(
-                //     {_id: new ObjectId()}
-                // )
                 res.status(201).json({
                     postCommentsC: replier
                 })
+                console.log(req.body)
+                if(req.body.creatorNickname !== req.userData.userId){
+                    User.updateOne(
+                        {nickname: req.body.creatorNickname},
+                        {$push: {'notifications': ME}}
+                    ).then(data => {
+                        console.log(data)
+                    })
+                }
+                
             })
             .catch(err => {
                 res.status(500).json({

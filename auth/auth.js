@@ -412,7 +412,6 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
         }
         function confirm(){
-            let ME = '';
             User.findOneAndUpdate(
                 {_id: req.userData.userId},
                 {
@@ -474,17 +473,15 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     date: new Date()
                 });
 
-                User.aggregate([
+                User.updateOne(
                     {
-                        $match: {
-                            _id: req.body.userId
-                        }
+                        _id: req.body.userId
                     },
                     {
                         $addToSet: {'afterLogin.gotReqs': req.userData.userId},
                         $push: {'notifications': ME },
                     }
-                ])
+                )
                 .then(user => {
                     res.status(201).json({
                         message: 'You sent a friend request',
