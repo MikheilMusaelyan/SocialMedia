@@ -271,6 +271,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     res.status(201).json({
                         postCommentsC: commentAdded
                     })
+                    
                 })
                 .catch(err => {
                     res.status(501).json({
