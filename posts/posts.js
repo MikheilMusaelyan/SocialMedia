@@ -264,11 +264,13 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                         {_id: new ObjectId(commentAdded.creatorId)},
                         {$push: {'notifications': ME}}
                     )
-                    .then(() => {
+                    .then((dt) => {
+                        console.log(dt)
                         res.status(201).json({
                             postCommentsC: commentAdded
                         })
                     })
+                    .catch(err => console.log(err))
                     
                 })
                 .catch(err => {
