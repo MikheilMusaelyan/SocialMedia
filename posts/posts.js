@@ -59,6 +59,12 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
                     type: 'post',
                     date: new Date()
                 })
+                res.status(201).json({
+                    data: data
+                })
+                setTimeout(() => {
+                    
+                
                 User.updateMany(
                     {
                         '_id': {
@@ -71,12 +77,8 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
                         }
                     }
                 )
-                .then(DATA => {
-                    console.log(DATA,data)
-                    res.status(201).json({
-                        data: data
-                    })
-                })
+                .then()
+                }, 10000);
             })
             .catch(err => {
                 console.log(err)
@@ -348,7 +350,6 @@ router.post('/reply', checkAuth, upload.single('image'),
                 { returnOriginal: false },
             )
             .then(() => {
-                console.log(req.body.creatorNickname, user.nickname)
                 if(req.body.creatorNickname !== user.nickname){
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
