@@ -59,12 +59,6 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
                     type: 'post',
                     date: new Date()
                 })
-                res.status(201).json({
-                    data: data
-                })
-                setTimeout(() => {
-                    
-                
                 User.updateMany(
                     {
                         '_id': {
@@ -77,8 +71,11 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
                         }
                     }
                 )
-                .then()
-                }, 10000);
+                .then(DATA => {
+                    res.status(201).json({
+                        data: data
+                    })
+                })
             })
             .catch(err => {
                 console.log(err)
@@ -268,7 +265,9 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                             {$push: {'notifications': ME}}
                         )
                         .then(() => {
-                            
+                            res.status(201).json({
+                                postCommentsC: commentAdded
+                            })
                         })
                         .catch(err => 
                             res.status(500).json({
@@ -276,11 +275,6 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                             })
                         )
                     };
-                    
-                    res.status(201).json({
-                        postCommentsC: commentAdded
-                    })
-            
                 })
                 .catch(err => {
                     res.status(501).json({
@@ -324,7 +318,7 @@ router.post('/reply', checkAuth, upload.single('image'),
             } if(req.body.image == undefined || req.body.image == null){
                 req.body.image = ""
             }
-            let replier = new Replier({
+            const replier = new Replier({
                 comment: req.body.comment,
                 image: cloudinaryUrl,
                 replies: [],
@@ -354,11 +348,18 @@ router.post('/reply', checkAuth, upload.single('image'),
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
                         {$push: {'notifications': ME}}
-                    ).then()
+                    )
+                    .then(() => {
+                        res.status(201).json({
+                            postCommentsC: replier
+                        })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            error: err
+                        })
+                    })
                 }
-                res.status(201).json({
-                    postCommentsC: replier
-                })
             })
             .catch(err => {
                 res.status(500).json({
