@@ -259,10 +259,12 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     }
                 )
                 .then(posts => {
+                    console.log(ME, 'wtf')
                     User.updateOne(
                         {_id: new ObjectId(commentAdded.creatorId)},
                         {$push: {'notifications': ME}}
-                    ).then(() => {
+                    )
+                    .then(() => {
                         res.status(201).json({
                             postCommentsC: commentAdded
                         })
@@ -321,6 +323,12 @@ router.post('/reply', checkAuth, upload.single('image'),
                 creatorNickname: userNickname,
                 date: Date.now()
             });
+            const ME = new Notification({
+                text: `${user['nickname']} replied to you`,
+                linker: req.query.postId,
+                type: 'post',
+                date: new Date()
+            })
 
             Post.findOneAndUpdate(
                 { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
@@ -331,6 +339,9 @@ router.post('/reply', checkAuth, upload.single('image'),
                 { returnOriginal: false },
             )
             .then(() => {
+                // User.findOne(
+                //     {_id: new ObjectId()}
+                // )
                 res.status(201).json({
                     postCommentsC: replier
                 })
