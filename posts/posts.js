@@ -51,6 +51,7 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             });
 
             addedPost.save().then(data => {
+                console.log(data, 123)
                 const usersFriends = usersData.afterLogin.friends;
                 const ME = new Notification({
                     text: `${usersData['nickname']} uploaded a post`,
@@ -71,12 +72,14 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
                     }
                 )
                 .then(DATA => {
+                    console.log(DATA,data)
                     res.status(201).json({
                         data: data
                     })
                 })
             })
             .catch(err => {
+                console.log(err)
                 res.status(500).json({
                     err
                 })
