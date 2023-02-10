@@ -338,7 +338,7 @@ router.post('/reply', checkAuth, upload.single('image'),
                 type: 'post',
                 date: new Date()
             })
-            console.log(ME, req.body.creatorNickname ,req.userData.userId)
+
             Post.findOneAndUpdate(
                 { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
                 { 
@@ -348,7 +348,8 @@ router.post('/reply', checkAuth, upload.single('image'),
                 { returnOriginal: false },
             )
             .then(() => {
-                if(req.body.creatorNickname !== req.userData.userId){
+                console.log(req.body.creatorNickname, user.nickname)
+                if(req.body.creatorNickname !== user.nickname){
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
                         {$push: {'notifications': ME}}
