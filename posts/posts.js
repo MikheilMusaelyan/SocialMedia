@@ -266,9 +266,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                             {$push: {'notifications': ME}}
                         )
                         .then(() => {
-                            res.status(201).json({
-                                postCommentsC: commentAdded
-                            })
+                            
                         })
                         .catch(err => 
                             res.status(500).json({
@@ -277,8 +275,10 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                         )
                     };
                     
-                    
-                    
+                    res.status(201).json({
+                        postCommentsC: commentAdded
+                    })
+            
                 })
                 .catch(err => {
                     res.status(501).json({
@@ -338,7 +338,6 @@ router.post('/reply', checkAuth, upload.single('image'),
                 type: 'post',
                 date: new Date()
             })
-            console.log(req.body.creatorNickname, req.userdata.userId)
             Post.findOneAndUpdate(
                 { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
                 { 
@@ -348,7 +347,6 @@ router.post('/reply', checkAuth, upload.single('image'),
                 { returnOriginal: false },
             )
             .then(() => {
-                console.log(req.body.creatorNickname, req.userdata.userId)
                 if(req.body.creatorNickname !== req.userData.userId){
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
