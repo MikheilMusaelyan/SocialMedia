@@ -259,7 +259,7 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                         type: 'post',
                         date: new Date()
                     });
-
+                    
                     if(String(post.creatorId) !== req.userData.userId){
                         User.updateOne(
                             {_id: post.creatorId},
@@ -338,6 +338,7 @@ router.post('/reply', checkAuth, upload.single('image'),
                 type: 'post',
                 date: new Date()
             })
+            console.log(ME, req.body.creatorNickname ,req.userData.userId)
             Post.findOneAndUpdate(
                 { _id: req.query.postId, "comments._id": new ObjectId(req.query.commentId)},
                 { 
