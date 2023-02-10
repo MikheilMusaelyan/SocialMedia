@@ -262,8 +262,8 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                         type: 'post',
                         date: new Date()
                     })
-                    console.log(post.creatorId, req.userData.userId)
-                    if(String(post.creatorId !== req.userData.userId)){
+                    
+                    if(String(post.creatorId) !== req.userData.userId){
                         User.updateOne(
                             {_id: post.creatorId},
                             {$push: {'notifications': ME}}

@@ -32,7 +32,7 @@ router.get('/searchUsers', (req, res) => {
                     _id: "$_id",
                     nickname: "$nickname",
                     profilePic: "$afterLogin.profilePic",
-                    notifications: '$notifications'
+                    notifications: "$notifications"
                 }
             }
         },
@@ -474,13 +474,17 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     date: new Date()
                 });
 
-                User.findOneAndUpdate(
-                    {_id: req.body.userId},
+                User.aggregate([
+                    {
+                        $match: {
+                            _id: req.body.userId
+                        }
+                    },
                     {
                         $addToSet: {'afterLogin.gotReqs': req.userData.userId},
-                        $push: {'notifications': ME }
+                        $push: {'notifications': ME },
                     }
-                )
+                ])
                 .then(user => {
                     res.status(201).json({
                         message: 'You sent a friend request',
