@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./auth-validator');
 const exportsFile = require('../exports');
+const Notification = require('../notification/notification-mongoose')
 
 
 const upload = exportsFile.upload;
@@ -58,7 +59,7 @@ router.post('', (req, res, cb) => {
             email: req.body.email,
             nickname: req.body.nickname,
             password: hash,
-            socketId: '',
+            notifications: [],
             afterLogin: req.body.afterLogin
         })
         .save().then((user) => {
@@ -410,20 +411,33 @@ router.put('/addFriend', checkAuth, (req, res) => {
             })
         }
         function confirm(){
+            let ME = '';
             User.findOneAndUpdate(
                 {_id: req.userData.userId},
                 {
                     $pull: {'afterLogin.gotReqs': req.body.userId},
-                    $push: {'afterLogin.friends': req.body.userId}
+                    $addToSet: {'afterLogin.friends': req.body.userId}
                 }
             )
             .then(me => {
+                const ME = new Notification({
+                    text: `${me['nickname']} confirmed your friend request`,
+                    linker: String(me['_id']),
+                    type: 'userProfile',
+                    date: new Date()
+                })
                 // second started
                 User.findOneAndUpdate(
                     {_id: req.body.userId},
                     {
                         $pull: {'afterLogin.sentReqs': req.userData.userId},
-                        $push: {'afterLogin.friends': req.userData.userId}
+                        $addToSet: {
+                            'afterLogin.friends': req.userData.userId
+                        },
+                        $push: {
+                            'notifications': ME
+                            //  `${myName} confirmed your friend request`
+                        }
                     }
                 )
                 .then(otherUser => {
@@ -448,13 +462,23 @@ router.put('/addFriend', checkAuth, (req, res) => {
         }
         function send(){
             User.findOneAndUpdate(
-                {_id: req.body.userId},
-                {$addToSet: {'afterLogin.gotReqs': req.userData.userId}}
+                {_id: req.userData.userId}, 
+                {$addToSet: {"afterLogin.sentReqs": req.body.userId}}
             )
-            .then(user => {
+            .then(me => {
+                const ME = new Notification({
+                    text: `${me['nickname']} sent you a friend request`,
+                    linker: String(me['_id']),
+                    type: 'userProfile',
+                    date: new Date()
+                });
+
                 User.findOneAndUpdate(
-                    {_id: req.userData.userId}, 
-                    {$addToSet: {"afterLogin.sentReqs": req.body.userId}}
+                    {_id: req.body.userId},
+                    {
+                        $addToSet: {'afterLogin.gotReqs': req.userData.userId},
+                        $push: {'notifications': ME }
+                    }
                 )
                 .then(user => {
                     res.status(201).json({
@@ -468,7 +492,6 @@ router.put('/addFriend', checkAuth, (req, res) => {
                         message: 'User not found1'
                     });
                 })
-
             })
             .catch(err => {
                 console.log(err, 'error occ')
