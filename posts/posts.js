@@ -241,12 +241,6 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     creatorNickname: userNickname,
                     date: Date.now()
                 });
-                const ME = new Notification({
-                    text: `${user['nickname']} commented on your post`,
-                    linker: req.params.postId,
-                    type: 'post',
-                    date: new Date()
-                })
                 post.updateOne(
                     {
                         $push: {
@@ -258,20 +252,33 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                         $inc: {'commentsLength': 1}
                     }
                 )
-                .then(posts => {
-                    console.log(ME, 'wtf')
-                    User.updateOne(
-                        {_id: new ObjectId(commentAdded.creatorId)},
-                        {$push: {'notifications': ME}}
-                    )
-                    .then((dt) => {
-                        console.log(dt)
+                .then(POST => {
+                    const ME = new Notification({
+                        text: `${user['nickname']} commented on your post`,
+                        linker: req.params.postId,
+                        type: 'post',
+                        date: new Date()
+                    })
+                    if(String(post.creatorId !== req.userData.userId)){
+                        User.updateOne(
+                            {_id: post.creatorId},
+                            {$push: {'notifications': ME}}
+                        )
+                        .then((dt) => {
+                            res.status(201).json({
+                                postCommentsC: commentAdded
+                            })
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                err: err
+                            })
+                        })
+                    } else {
                         res.status(201).json({
                             postCommentsC: commentAdded
                         })
-                    })
-                    .catch(err => console.log(err))
-                    
+                    }
                 })
                 .catch(err => {
                     res.status(501).json({
