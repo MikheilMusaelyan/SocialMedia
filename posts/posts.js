@@ -253,31 +253,22 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     }
                 )
                 .then(POST => {
+                    res.status(201).json({
+                        postCommentsC: commentAdded
+                    })
                     const ME = new Notification({
                         text: `${user['nickname']} commented on your post`,
                         linker: req.params.postId,
                         type: 'post',
                         date: new Date()
                     })
+                    console.log(post.creatorId, req.userData.userId)
                     if(String(post.creatorId !== req.userData.userId)){
                         User.updateOne(
                             {_id: post.creatorId},
                             {$push: {'notifications': ME}}
                         )
-                        .then((dt) => {
-                            res.status(201).json({
-                                postCommentsC: commentAdded
-                            })
-                        })
-                        .catch(err => {
-                            res.status(500).json({
-                                err: err
-                            })
-                        })
-                    } else {
-                        res.status(201).json({
-                            postCommentsC: commentAdded
-                        })
+                        .then()
                     }
                 })
                 .catch(err => {
