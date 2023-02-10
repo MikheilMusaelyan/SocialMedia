@@ -344,6 +344,7 @@ router.post('/reply', checkAuth, upload.single('image'),
                 })
                 console.log(req.body.creatorNickname, req.userdata.userId)
                 if(req.body.creatorNickname !== req.userData.userId){
+                    
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
                         {$push: {'notifications': ME}}
