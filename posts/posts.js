@@ -4,6 +4,7 @@ const Post = require('./singlepost-mongoose');
 const User = require('../auth/auth-mongoose')
 const Comment = require('../comments/comments-mongoose');
 const Replier = require('../comments/replier.mongoose');
+const Notification = require('../notification/notification-mongoose')
 
 const checkAuth = require('../auth/auth-validator');
 const exportsFile = require('../exports');
