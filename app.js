@@ -4,6 +4,7 @@ const app = express();
 const userRoutes = require('./auth/auth');
 const postRoutes = require('./posts/posts');
 const messages = require('./messages/messages');
+const notifications = require('./notification/notifications')
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -36,7 +37,8 @@ app.use((req, res, next) => {
 
 app.use('/posts', postRoutes);
 app.use('/users', userRoutes);
-app.use('/messages', messages)
+app.use('/messages', messages);
+app.use('/notifications', notifications)
 app.get('/', (req, res) => {
     res.send('Hello World!!!');
 });
