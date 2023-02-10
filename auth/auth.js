@@ -32,6 +32,7 @@ router.get('/searchUsers', (req, res) => {
                     _id: "$_id",
                     nickname: "$nickname",
                     profilePic: "$afterLogin.profilePic",
+                    notifications: '$notifications'
                 }
             }
         },
