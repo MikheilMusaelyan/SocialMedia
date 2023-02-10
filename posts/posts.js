@@ -253,23 +253,24 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     }
                 )
                 .then(POST => {
-                    res.status(201).json({
-                        postCommentsC: commentAdded
-                    })
                     const ME = new Notification({
                         text: `${user['nickname']} commented on your post`,
                         linker: req.params.postId,
                         type: 'post',
                         date: new Date()
-                    })
-                    
+                    });
+
                     if(String(post.creatorId) !== req.userData.userId){
                         User.updateOne(
                             {_id: post.creatorId},
                             {$push: {'notifications': ME}}
                         )
                         .then()
-                    }
+                    };
+                    
+                    res.status(201).json({
+                        postCommentsC: commentAdded
+                    })
                 })
                 .catch(err => {
                     res.status(501).json({
@@ -339,20 +340,16 @@ router.post('/reply', checkAuth, upload.single('image'),
                 { returnOriginal: false },
             )
             .then(() => {
-                res.status(201).json({
-                    postCommentsC: replier
-                })
                 console.log(req.body.creatorNickname, req.userdata.userId)
                 if(req.body.creatorNickname !== req.userData.userId){
-                    
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
                         {$push: {'notifications': ME}}
-                    ).then(data => {
-                        console.log(data)
-                    })
+                    ).then()
                 }
-                
+                res.status(201).json({
+                    postCommentsC: replier
+                })
             })
             .catch(err => {
                 res.status(500).json({
