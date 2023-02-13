@@ -444,7 +444,8 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     res.status(201).json({
                         change: 'Added',
                         message: 'Friends',
-                        theirMessage: 'Friends'
+                        theirMessage: 'Friends',
+                        sendNot: true
                     })
                 })
                 .catch(err => {
@@ -490,7 +491,8 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 .then(user => {
                     res.status(201).json({
                         message: 'You sent a friend request',
-                        theirMessage: 'Confirm'
+                        theirMessage: 'Confirm',
+                        sendNot: true
                     })
                 })
                 .catch(err => {
