@@ -65,15 +65,18 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
                             $in: usersFriends.map(user => new ObjectId(user))
                         }
                     },
-                    {
+                    {    
                         $push: {
-                            'notifications': ME
-                        }
+                            'notifications': {
+                                $each: [ME],
+                                $position: 0
+                            }
+                        },
                     }
                 )
                 .then(DATA => {
                     res.status(201).json({
-                        data: data
+                        data: data,
                     })
                 })
             })
@@ -262,7 +265,14 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                     if(String(post.creatorId) !== req.userData.userId){
                         User.updateOne(
                             {_id: post.creatorId},
-                            {$push: {'notifications': ME}}
+                            {
+                                $push: {
+                                    'notifications': {
+                                        $each: [ME],
+                                        $position: 0
+                                    }
+                                },
+                            }
                         )
                         .then(() => {
                             res.status(201).json({
@@ -347,7 +357,14 @@ router.post('/reply', checkAuth, upload.single('image'),
                 if(req.body.creatorNickname !== user.nickname){
                     User.updateOne(
                         {nickname: req.body.creatorNickname},
-                        {$push: {'notifications': ME}}
+                        {
+                            $push: {
+                                'notifications': {
+                                    $each: [ME],
+                                    $position: 0
+                                }
+                            },
+                        }
                     )
                     .then(() => {
                         res.status(201).json({

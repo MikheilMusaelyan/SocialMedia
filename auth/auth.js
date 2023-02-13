@@ -430,14 +430,14 @@ router.put('/addFriend', checkAuth, (req, res) => {
                 User.findOneAndUpdate(
                     {_id: req.body.userId},
                     {
-                        $pull: {'afterLogin.sentReqs': req.userData.userId},
-                        $addToSet: {
-                            'afterLogin.friends': req.userData.userId
-                        },
+                        $pull: {'afterLogin.sentReqs': req.userData.userId },
+                        $addToSet: { 'afterLogin.friends': req.userData.userId },
                         $push: {
-                            'notifications': ME
-                            //  `${myName} confirmed your friend request`
-                        }
+                            'notifications': {
+                                $each: [ME],
+                                $position: 0
+                            }
+                        },
                     }
                 )
                 .then(otherUser => {
@@ -479,7 +479,12 @@ router.put('/addFriend', checkAuth, (req, res) => {
                     },
                     {
                         $addToSet: {'afterLogin.gotReqs': req.userData.userId},
-                        $push: {'notifications': ME },
+                        $push: {
+                            'notifications': {
+                                $each: [ME],
+                                $position: 0
+                            }
+                        },
                     }
                 )
                 .then(user => {

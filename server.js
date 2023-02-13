@@ -117,6 +117,10 @@ io.on('connection', (socket) => {
         )
     })
 
+    socket.on('notification', (info) => {
+        io.to(info.id).emit('notification')
+    })
+
     socket.on('addedToContacts', (userId) => {
         io.to(userId).emit('renewContacts')
     })
