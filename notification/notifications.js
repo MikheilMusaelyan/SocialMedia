@@ -5,15 +5,16 @@ const checkAuth = require('../auth/auth-validator');
 var ObjectId = require('mongodb').ObjectId;
 
 router.get('/', checkAuth, (req, res) => {
+    console.log(req.query)
     Users.aggregate([
         {
             $match: {
-                _id: new ObjectId(req.query.id)
+                _id: new ObjectId(req.userData.userId)
             }
         },
         {
             $project: {
-                notifications: { $slice: ["$notifications", 20 * (req.query.fetchTimes - 1), 20] }
+                notifications: { $slice: ["$notifications", 20 * (+req.query.fetchTimes - 1), 20] }
             }
         }
     ]).then(data => {
