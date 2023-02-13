@@ -252,7 +252,8 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                         )
                         .then(() => {
                             res.status(201).json({
-                                postCommentsC: commentAdded
+                                postCommentsC: commentAdded,
+                                sendNot: post.creatorId
                             })
                         })
                         .catch(err => 
@@ -260,7 +261,11 @@ router.post('/comment/:postId', checkAuth, upload.single('image'), (req, res, ne
                                 err
                             })
                         )
-                    };
+                    } else {
+                        res.status(201).json({
+                            postCommentsC: commentAdded,
+                        })
+                    }
                 })
                 .catch(err => {
                     res.status(501).json({
@@ -352,6 +357,10 @@ router.post('/reply', checkAuth, upload.single('image'),
                             error: err
                         })
                     })
+                } else {
+                    res.status(201).json({
+                    postCommentsC: replier
+                })
                 }
             })
             .catch(err => {
