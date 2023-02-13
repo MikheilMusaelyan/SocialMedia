@@ -335,9 +335,9 @@ router.post('/reply', checkAuth, upload.single('image'),
                 { returnOriginal: false },
             )
             .then(() => {
-                if(req.body.creatorNickname !== user.nickname){
+                if(req.body.creatorId !== String(user._id)){
                     User.updateOne(
-                        {nickname: req.body.creatorNickname},
+                        {_id: new ObjectId(req.body.creatorId)},
                         {
                             $push: {
                                 'notifications': {
@@ -349,7 +349,8 @@ router.post('/reply', checkAuth, upload.single('image'),
                     )
                     .then(() => {
                         res.status(201).json({
-                            postCommentsC: replier
+                            postCommentsC: replier,
+                            sendNot: req.body.creatorId
                         })
                     })
                     .catch(err => {
@@ -359,8 +360,8 @@ router.post('/reply', checkAuth, upload.single('image'),
                     })
                 } else {
                     res.status(201).json({
-                    postCommentsC: replier
-                })
+                        postCommentsC: replier
+                    })
                 }
             })
             .catch(err => {
