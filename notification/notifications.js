@@ -5,7 +5,7 @@ const checkAuth = require('../auth/auth-validator');
 var ObjectId = require('mongodb').ObjectId;
 
 router.get('/', checkAuth, (req, res) => {
-    console.log(req.query)
+
     Users.aggregate([
         {
             $match: {
