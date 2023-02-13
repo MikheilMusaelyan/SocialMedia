@@ -52,32 +52,8 @@ router.post('', checkAuth, upload.single('image'), (req, res, next) => {
             });
 
             addedPost.save().then(data => {
-                const usersFriends = usersData.afterLogin.friends;
-                const ME = new Notification({
-                    text: `${usersData['nickname']} uploaded a post`,
-                    linker: String(addedPost['_id']),
-                    type: 'post',
-                    date: new Date()
-                })
-                User.updateMany(
-                    {
-                        '_id': {
-                            $in: usersFriends.map(user => new ObjectId(user))
-                        }
-                    },
-                    {    
-                        $push: {
-                            'notifications': {
-                                $each: [ME],
-                                $position: 0
-                            }
-                        },
-                    }
-                )
-                .then(DATA => {
-                    res.status(201).json({
-                        data: data,
-                    })
+                res.status(201).json({
+                    data: data
                 })
             })
             .catch(err => {
