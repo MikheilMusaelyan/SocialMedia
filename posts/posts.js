@@ -372,7 +372,26 @@ router.post('/reply', checkAuth, upload.single('image'),
     }
 });
 
-
+router.get('/getSinglePost', (req, res) => {
+    const postId = new ObjectId(req.query.postId)
+    Post.findOne({_id: postId})
+    .then(post => {
+        res.status(200).json({
+            creatorProfilePic: post.creatorProfilePic, 
+            image: post.image,
+            post: post.post,
+            date: post.date, 
+            creatorNickname: post.creatorNickname,
+            creatorId: post.creatorId
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.send(501).json({
+            err
+        })
+    })
+})
 
 // important!!!
 // router.put('/anotherReply', (req, res) => {
