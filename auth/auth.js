@@ -152,7 +152,8 @@ router.get('/autoLogin', (req, res) => {
     .then(foundUser => {
         res.status(201).json({
             userId: foundUser._id,
-            profilePic: foundUser.afterLogin.profilePic
+            profilePic: foundUser.afterLogin.profilePic,
+            nickname: foundUser.nickname
         })
     })
     .catch(err => {
