@@ -393,7 +393,6 @@ router.get('/getSinglePost', (req, res) => {
     })
 })
 
-// important!!!
 // router.put('/anotherReply', (req, res) => {
 //     let replier = {
 

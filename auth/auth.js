@@ -146,6 +146,21 @@ router.post('/login', (req, res, cb) => {
     })
 });
 
+router.get('/autoLogin', (req, res) => {
+    User.findOne({nickname: req.params.nickname})
+    .then(user => {
+        res.status(201).json({
+            user: user
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(404).json({
+            error: 'user not found'
+        })
+    })
+})
+
 // router.put('/renewSocketId', checkAuth, (req, res) => {
 //     User.findOneAndUpdate(
 //         {_id: req.userData.userId},
