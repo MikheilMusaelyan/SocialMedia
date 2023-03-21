@@ -146,6 +146,8 @@ router.post('/login', (req, res, cb) => {
     })
 });
 
+
+
 router.get('/autoLogin', (req, res) => {
     const verifiedT = jwt.verify(req.query.token, process.env.JWT_SECRET_KEY);
     User.findOne({_id: new ObjectId(verifiedT.userId)})
