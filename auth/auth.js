@@ -147,10 +147,12 @@ router.post('/login', (req, res, cb) => {
 });
 
 router.get('/autoLogin', (req, res) => {
-    User.findOne({nickname: req.params.nickname})
-    .then(user => {
+    const verifiedT = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    User.findOne({_id: new ObjectId(verifiedT.userId)})
+    .then(foundUser => {
         res.status(201).json({
-            user: user
+            userId: foundUser._id,
+            profilePic: foundUser.afterLogin.profilePic
         })
     })
     .catch(err => {
