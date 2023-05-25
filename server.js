@@ -38,6 +38,10 @@ const onListening = () => {
     debug("Listening on " + bind);
 };
 
+// const express = require('express');
+// const router = express.Router();
+
+
 const app = require("./app");
 const debug = require("debug")("node-angular"); //node-angular any name
 const http = require("http");
@@ -45,6 +49,7 @@ const port = normalizePort(process.env.PORT || '3000');
 const server = http.createServer(app);
 const User = require('./auth/auth-mongoose');
 var ObjectId = require('mongodb').ObjectId;
+
 
 const io = require('socket.io')(server, {
     cors: {
@@ -54,6 +59,20 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
 
+    // socket.request.user = { _id: data.userId };
+
+    // socket.emit('mySocketId', socket.id)
+
+
+    // socket.on('sendSocketToFriends', (data) => {
+    //     if(data.friendsSockets.length > 0){
+    //         io.to(data.friendsSockets).emit('friendsSocketId', 
+    //         {
+    //             userId: data.userId, 
+    //             socketId: data.mySocketId
+    //         })
+    //     }
+    // })
     socket.on('logout', (ID) => {
         socket.leave(ID)
     })
@@ -63,7 +82,6 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        
         if(socket.request.user){
             User.findOneAndUpdate(
             { _id: new ObjectId(socket.request.user._id) },
@@ -100,7 +118,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('notification', (info) => {
-        io.to(info).emit('notification')
+        io.to(info.id).emit('notification')
     })
 
     socket.on('addedToContacts', (userId) => {
@@ -108,6 +126,7 @@ io.on('connection', (socket) => {
     })
 })
 
+//
 app.set('port', port);
 app.set('io', io)
 
