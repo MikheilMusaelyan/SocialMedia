@@ -63,6 +63,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
+        
         if(socket.request.user){
             User.findOneAndUpdate(
             { _id: new ObjectId(socket.request.user._id) },
